@@ -8,6 +8,9 @@ const pkg = require('./package.json')
 const HELP =
 `usage: ${pkg.name} command [-w/--watch file/dir] [-i/--ignore file/dir] [-q/--quiet]
 
+    required:
+        command: Specifies the command to be executed when a change is detected.
+
     options:
         -w, --watch (default: current dir): Specifies files/dirs to
             be watched. If a dir is provided it is watched recursively, unless
