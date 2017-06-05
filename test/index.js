@@ -22,6 +22,9 @@ const cleanup = () =>{
 test('runs command on change', { timeout: 1500 }, t => {
 	t.plan(1)
 
+	if (!fs.existsSync(path.resolve(__dirname, 'tmp')))
+		fs.mkdirSync(path.resolve(__dirname, 'tmp'))
+
 	cleanup()
 
 	getPort().then(port => {
