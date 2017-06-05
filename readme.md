@@ -8,7 +8,7 @@
 
 ## cli
 
-### `big-eye (command) [-w/--watch file/dir] [-i/--ignore file/dir] [-q/--quiet]`
+### `big-eye (command) [-wiq]`
 
 #### options
 
