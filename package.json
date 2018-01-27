@@ -8,7 +8,7 @@
   "author": "nikersify <nikersify@nikerino.com> (nikerino.com)",
   "license": "MIT",
   "scripts": {
-    "test": "tape test/"
+    "test": "xo && tape test/"
   },
   "dependencies": {
     "chalk": "^1.1.3",
@@ -19,6 +19,10 @@
   },
   "devDependencies": {
     "get-port": "^3.1.0",
-    "tape": "^4.6.3"
+    "tape": "^4.6.3",
+    "xo": "^0.18.2"
+  },
+  "xo": {
+    "semicolon": false
   }
 }

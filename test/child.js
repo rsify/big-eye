@@ -2,5 +2,5 @@ const net = require('net')
 
 const port = process.argv[2]
 
-// exit immediately
+// Exit immediately
 net.connect(port, process.exit)

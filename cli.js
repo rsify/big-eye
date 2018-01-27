@@ -1,9 +1,10 @@
 #!/usr/bin/env node
 
 const argv = require('minimist')(process.argv.slice(2))
-const bigEye = require('./')
 const logger = require('./lib/logger')
 const pkg = require('./package.json')
+
+const bigEye = require('./')
 
 const HELP =
 `usage: ${pkg.name} command [-w/--watch file/dir] [-i/--ignore file/dir] [-q/--quiet]
@@ -30,11 +31,20 @@ if (argv.h || argv.help) {
 }
 
 const mergeToArr = (x, y) => {
-	if (typeof x === 'undefined') x = []
-	if (typeof y === 'undefined') y = []
+	if (typeof x === 'undefined') {
+		x = []
+	}
 
-	if (!Array.isArray(x)) x = [ x ]
-	if (!Array.isArray(y)) y = [ y ]
+	if (typeof y === 'undefined') {
+		y = []
+	}
+
+	if (!Array.isArray(x)) {
+		x = [x]
+	}
+	if (!Array.isArray(y)) {
+		y = [y]
+	}
 
 	const tmp = x.concat(y)
 	return tmp.length ? tmp : null
@@ -43,27 +53,42 @@ const mergeToArr = (x, y) => {
 const obj = {}
 
 const watch = mergeToArr(argv.w, argv.watch)
-if (watch) obj.watch = watch
+if (watch) {
+	obj.watch = watch
+}
 
 const command = (function () {
-	let res = argv.x || argv.execute || argv._
-	if (Array.isArray(res)) return res.join(' ')
-	else return res
+	const res = argv.x || argv.execute || argv._
+
+	if (Array.isArray(res)) {
+		return res.join(' ')
+	}
+
+	return res
 })()
-if (command) obj.command = command
+if (command) {
+	obj.command = command
+}
 
 const ignore = mergeToArr(argv.i, argv.ignore)
-if (ignore) obj.ignore = ignore
+if (ignore) {
+	obj.ignore = ignore
+}
 
 const verbose = (function () {
-	if (argv.silent === false || argv.q === false) return false
-	else return true
+	if (argv.silent === false || argv.q === false) {
+		return false
+	}
+
+	return true
 })()
-if (verbose) obj.verbose = verbose
+if (verbose) {
+	obj.verbose = verbose
+}
 
 try {
 	bigEye(obj)
-} catch (e) {
-	logger('error', e.stack)
+} catch (err) {
+	logger('error', err.stack)
 	process.exit(1)
 }
