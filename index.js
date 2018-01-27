@@ -1,11 +1,10 @@
 /* eslint unicorn/no-process-exit: "off" */
 
-const fs = require('fs')
 const path = require('path')
 const {spawn} = require('child_process')
 
-const debounce = require('debounce')
-const minimatch = require('minimatch')
+const chokidar = require('chokidar')
+const debounce = require('lodash.debounce')
 const once = require('once')
 
 const pkg = require('./package.json')
@@ -32,12 +31,7 @@ module.exports = (options = {}) => {
 		opts.watch = [opts.watch]
 	}
 
-	opts.ignore = opts.ignore.map(x => path.resolve(x))
-
 	const log = opts.verbose ? require('./lib/logger') : () => {}
-
-	const watchSet = new Set()
-	const watchResolved = opts.watch.map(x => path.resolve(x))
 
 	const leadMsg = 'starting with config:\n' +
 		`\tcommand: ${opts.command}\n` +
@@ -46,52 +40,8 @@ module.exports = (options = {}) => {
 
 	log('info', leadMsg)
 
-	const isIgnored = p => {
-		for (const ig of opts.ignore) {
-			if (minimatch(p, ig)) {
-				return true
-			}
-		}
-
-		return false
-	}
-
-	const add = p => {
-		if (!isIgnored(p)) {
-			watchSet.add(p)
-		}
-	}
-
-	const walk = p => {
-		const children = fs.readdirSync(p)
-
-		for (const child of children) {
-			const resolved = path.resolve(p, child)
-
-			const stats = fs.statSync(resolved)
-
-			if (stats.isDirectory()) {
-				add(resolved)
-				walk(resolved)
-			}
-		}
-	}
-
-	for (const p of watchResolved) {
-		const stats = fs.statSync(p)
-
-		if (stats.isDirectory()) {
-			add(p)
-			if (p !== path.resolve('.')) {
-				walk(p)
-			}
-		} else {
-			watchSet.add(p)
-		}
-	}
-
 	let ref
-	const execute = ex => {
+	const execute = () => {
 		if (ref) {
 			ref.kill('SIGTERM')
 			log('info', 'file changes detected, restarting...')
@@ -105,7 +55,7 @@ module.exports = (options = {}) => {
 			flag = '/c'
 		}
 
-		ref = spawn(sh, [flag, ex], {
+		ref = spawn(sh, [flag, opts.command], {
 			stdio: ['pipe', process.stdout, process.stderr]
 		})
 
@@ -124,19 +74,15 @@ module.exports = (options = {}) => {
 		})
 	}
 
-	// Attach watchers
-	for (const p of watchSet) {
-		fs.watch(p, {
-			persistent: false
-		}, debounce((event, file) => {
-			if (!isIgnored(path.resolve(p, file))) {
-				execute(opts.command)
-			}
-		}))
-	}
+	// Attach watcher
+	const watcher = chokidar.watch(opts.watch, {
+		ignored: opts.ignore
+	})
 
-	// Initial execution
-	execute(opts.command)
+	const x = debounce(execute, 10)
+
+	// Command executes automatically on first 'add' event
+	watcher.on('all', x)
 
 	const cleanup = once(() => {
 		if (ref) {
@@ -155,10 +101,8 @@ module.exports = (options = {}) => {
 		process.exit(1)
 	})
 
-	// Force the process to keep being alive
-	const interval = setInterval(() => {}, 50000)
 	return {
 		_options: opts,
-		stop: () => interval.unref()
+		stop: () => watcher.close()
 	}
 }

@@ -1,8 +1,8 @@
 # big-eye [![npm](https://img.shields.io/npm/v/big-eye.svg)](https://www.npmjs.com/package/big-eye)
 
-> cli tool to execute specified commands on file changes
+> execute specified command[s] on file change[s]
 
-[![travis](https://travis-ci.org/Nikersify/big-eye.svg?branch=master)](https://travis-ci.org/Nikersify/big-eye)
+[![travis](https://travis-ci.org/nikersify/big-eye.svg?branch=master)](https://travis-ci.org/nikersify/big-eye)
 
 # usage
 
@@ -14,19 +14,21 @@
 
 ##### `command` - required
 
+Type: `string`
 Command to be executed when a change is detected.
 
 ##### `-w` `--watch` - default: `.`
 
-Files/dirs to be watched. If a dir is provided it is watched recursively, unless it's the pwd. Can be used multiple times.
+File/directory/glob to be watched. If a dir is provided it is watched recursively (i.e. all of its children and their children etc.). Can be used multiple times.
 
 ##### `-i` `--ignore` - default: `.git, node_modules`
 
-Files/dirs to be ignored, even when specified by the --watch option. Can be used multiple times.
+Takes an [anymatch](https://github.com/micromatch/anymatch) compatible definition.
+Files/dirs to be ignored, even when specified by the `--watch` option. Can be used multiple times.
 
 ##### `-q` `--quiet` - default: `false`
 
-Skip all big-eye output, print only command stdout & stderr outputs.
+Skip all big-eye related output, print only command stdout & stderr outputs.
 
 # example
 
