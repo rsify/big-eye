@@ -31,7 +31,7 @@ test.cb('runs command on change', t => {
 	getPort().then(port => {
 		const eye = bigEye({
 			watch: path.resolve(__dirname, 'tmp'),
-			command: `node ${path.resolve(__dirname, 'child.js')} ${port}`,
+			command: `node ${path.resolve(__dirname, 'fixtures/child.js')} ${port}`,
 			verbose: false
 		})
 

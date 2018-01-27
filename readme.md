@@ -3,6 +3,7 @@
 > execute specified command[s] on file change[s]
 
 [![travis](https://travis-ci.org/nikersify/big-eye.svg?branch=master)](https://travis-ci.org/nikersify/big-eye)
+[![coveralls](https://coveralls.io/repos/github/nikersify/big-eye/badge.svg?branch=master)](https://coveralls.io/github/nikersify/big-eye?branch=master)
 
 # usage
 
