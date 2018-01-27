@@ -3,7 +3,7 @@ const net = require('net')
 const path = require('path')
 
 const getPort = require('get-port')
-const test = require('tape')
+const test = require('ava')
 
 const bigEye = require('../')
 
@@ -20,15 +20,14 @@ const cleanup = () => {
 	}
 }
 
-test('runs command on change', {timeout: 1500}, t => {
-	t.plan(1)
-
+test.cb('runs command on change', t => {
 	if (!fs.existsSync(path.resolve(__dirname, 'tmp')))	{
 		fs.mkdirSync(path.resolve(__dirname, 'tmp'))
 	}
 
 	cleanup()
 
+	const testMsg = 'ran exactly three times'
 	getPort().then(port => {
 		const eye = bigEye({
 			watch: path.resolve(__dirname, 'tmp'),
@@ -36,11 +35,13 @@ test('runs command on change', {timeout: 1500}, t => {
 			verbose: false
 		})
 
-		touch(path.resolve(__dirname, 'tmp', 'in-1'))
+		setTimeout(() => {
+			touch(path.resolve(__dirname, 'tmp', 'in-1'))
+		}, 500)
 
 		setTimeout(() => {
 			touch(path.resolve(__dirname, 'tmp', 'in-2'))
-		}, 500)
+		}, 1000)
 
 		let restarts = 0
 
@@ -49,13 +50,15 @@ test('runs command on change', {timeout: 1500}, t => {
 		server.on('connection', () => restarts++)
 
 		setTimeout(() => {
-			t.equal(restarts, 3, 'child ran exactly three times')
+			t.is(restarts, 3, testMsg)
 			cleanup()
 			server.unref()
 			eye.stop()
-		}, 1000)
+			t.end()
+		}, 1500)
 	}).catch(() => {
-		t.fail('ran exactly three times')
+		t.fail(testMsg)
 		cleanup()
+		t.end()
 	})
 })

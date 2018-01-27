@@ -90,7 +90,7 @@ module.exports = (options = {}) => {
 			ref.kill('SIGINT')
 		}
 
-		process.exit(1)
+		watcher.close()
 	})
 
 	process.on('exit', cleanup)
