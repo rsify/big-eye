@@ -107,6 +107,6 @@ module.exports = (command, options = {}) => {
 
 	return {
 		_options: opts,
-		stop: () => watcher.close()
+		stop: cleanup
 	}
 }

@@ -1,64 +1,56 @@
-const fs = require('fs')
-const net = require('net')
-const path = require('path')
+import fs from 'fs'
 
-const getPort = require('get-port')
-const test = require('ava')
+import delay from 'delay'
+import struc from 'struc'
+import test from 'ava'
 
-const bigEye = require('../')
+import bigEye from '../'
+import spawnServer from './helpers/server'
 
 const touch = filePath => {
 	fs.closeSync(fs.openSync(filePath, 'w'))
 }
 
-const cleanup = () => {
-	const files = fs.readdirSync(path.resolve(__dirname, 'tmp'))
+test('command must be a string', t => {
+	const err = t.throws(() => {
+		bigEye(0)
+	}, TypeError)
 
-	for (const file of files) {
-		const filePath = path.resolve(__dirname, 'tmp', file)
-		fs.unlinkSync(filePath)
-	}
-}
+	t.is(err.message, 'command must be a string, got number')
+})
 
-test.cb('runs command on change', t => {
-	if (!fs.existsSync(path.resolve(__dirname, 'tmp')))	{
-		fs.mkdirSync(path.resolve(__dirname, 'tmp'))
-	}
+test('command string must be a non-empty', t => {
+	const err = t.throws(() => {
+		bigEye('')
+	}, Error)
 
-	cleanup()
+	t.is(err.message, 'command\'s length must be greater than 0')
+})
 
-	const testMsg = 'ran exactly three times'
-	getPort().then(port => {
-		const eye = bigEye({
-			watch: path.resolve(__dirname, 'tmp'),
-			command: `node ${path.resolve(__dirname, 'fixtures/child.js')} ${port}`,
-			verbose: false
-		})
+test('initial exec', async t => {
+	const {stat} = await spawnServer()
 
-		setTimeout(() => {
-			touch(path.resolve(__dirname, 'tmp', 'in-1'))
-		}, 500)
+	await delay(200)
 
-		setTimeout(() => {
-			touch(path.resolve(__dirname, 'tmp', 'in-2'))
-		}, 1000)
+	// Not killed
+	t.is(await stat.connectionCount(), 1)
+	t.is(stat.execCount, 1)
+})
 
-		let restarts = 0
-
-		const server = net.createServer().listen({port})
-
-		server.on('connection', () => restarts++)
-
-		setTimeout(() => {
-			t.is(restarts, 3, testMsg)
-			cleanup()
-			server.unref()
-			eye.stop()
-			t.end()
-		}, 1500)
-	}).catch(() => {
-		t.fail(testMsg)
-		cleanup()
-		t.end()
+test('exec on change', async t => {
+	const root = struc({
+		a: ''
 	})
+
+	const {stat} = await spawnServer({
+		watch: root
+	})
+
+	await delay(200)
+	t.is(stat.execCount, 1)
+
+	touch(root + '/a')
+	await delay(200)
+
+	t.is(stat.execCount, 2)
 })
