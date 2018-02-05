@@ -8,15 +8,21 @@ const once = require('once')
 
 const pkg = require('./package.json')
 
-const defaults = {
-	delay: 10,
-	ignore: [],
-	lazy: false,
-	verbose: false,
-	watch: []
-}
-
 module.exports = (command, options = {}) => {
+	const defaults = {
+		delay: 10,
+		ignore: [],
+		lazy: false,
+		verbose: false,
+		watch: []
+	}
+
+	options.delay = options.delay || 10
+	options.ignore = options.ignore || []
+	options.lazy = options.lazy || false
+	options.verbose = options.verbose || false
+	options.watch = options.watch || []
+
 	const opts = Object.assign(defaults, options)
 
 	if (typeof command !== 'string') {
@@ -25,6 +31,26 @@ module.exports = (command, options = {}) => {
 
 	if (command.length === 0) {
 		throw new Error('command\'s length must be greater than 0')
+	}
+
+	if (typeof opts.delay !== 'number') {
+		throw new TypeError(`delay must be a number, got ${typeof opts.delay}`)
+	}
+
+	if (typeof opts.ignore !== 'string' && !Array.isArray(opts.ignore)) {
+		throw new TypeError(`ignore must be an array or string, got ${typeof opts.ignore}`)
+	}
+
+	if (typeof opts.lazy !== 'boolean') {
+		throw new TypeError(`lazy must be a boolean, got ${typeof opts.lazy}`)
+	}
+
+	if (typeof opts.verbose !== 'boolean') {
+		throw new TypeError(`verbose must be a boolean, got ${typeof opts.verbose}`)
+	}
+
+	if (typeof opts.watch !== 'string' && !Array.isArray(opts.watch)) {
+		throw new TypeError(`watch must be an array or string, got ${typeof opts.watch}`)
 	}
 
 	if (!Array.isArray(opts.ignore)) {
