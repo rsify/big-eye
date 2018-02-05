@@ -29,7 +29,32 @@ const cli = meow(`
 `, {
 	version: `${pkg.name} (${pkg.version})\n` +
 		`maintained by ${pkg.author}\n` +
-		`bug reports: ${pkg.bugs}`
+		`bug reports: ${pkg.bugs}`,
+	flags: {
+		watch: {
+			alias: 'w',
+			type: 'string'
+		},
+		ignore: {
+			alias: 'w',
+			type: 'string'
+		},
+		lazy: {
+			alias: 'l',
+			type: 'boolean',
+			default: false
+		},
+		delay: {
+			alias: 'd',
+			type: 'string',
+			default: 10
+		},
+		quiet: {
+			alias: 'q',
+			type: 'boolean',
+			default: false
+		}
+	}
 })
 
 const flags = cli.flags
@@ -56,25 +81,23 @@ const mergeToArr = (x, y) => {
 
 const options = {}
 
-if (flags.w || flags.watch) {
+if (flags.watch) {
 	options.watch = mergeToArr(flags.w, flags.watch)
 } else {
 	options.watch = ['.']
 }
 
-if (flags.i || flags.ignore) {
+if (flags.ignore) {
 	options.ignore = mergeToArr(flags.i, flags.ignore)
 } else if (fs.existsSync('.gitignore')) {
 	const content = fs.readFileSync('.gitignore', 'utf8')
 	options.ignore = content.split(os.EOL).filter(x => x.length !== 0)
 }
 
-if (flags.l || flags.lazy) {
-	options.lazy = true
-}
+options.lazy = flags.lazy
+options.verbose = !flags.quiet
 
 const command = cli.input.join(' ')
-options.verbose = !(flags.quiet || flags.q)
 
 try {
 	if (command.length === 0) {
