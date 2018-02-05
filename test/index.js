@@ -13,7 +13,7 @@ const touch = filePath => {
 test('initial exec', async t => {
 	const {stat} = await spawnServer()
 
-	await delay(200)
+	await delay(500)
 
 	// Not killed
 	t.is(await stat.connectionCount(), 1)
@@ -25,7 +25,7 @@ test('no initial exec with lazy option', async t => {
 		lazy: true
 	})
 
-	await delay(200)
+	await delay(500)
 
 	t.is(await stat.connectionCount(), 0)
 	t.is(stat.execCount, 0)
@@ -40,11 +40,11 @@ test('exec on change', async t => {
 		watch: root
 	})
 
-	await delay(200)
+	await delay(500)
 	t.is(stat.execCount, 1)
 
 	touch(root + '/a')
-	await delay(200)
+	await delay(500)
 
 	t.is(stat.execCount, 2)
 })
@@ -59,14 +59,14 @@ test('debounce executions with delay option', async t => {
 		delay: 500
 	})
 
-	await delay(700)
+	await delay(1000)
 	t.is(stat.execCount, 1)
 
 	touch(root + '/a')
-	await delay(200)
+	await delay(500)
 
 	t.is(stat.execCount, 1)
 
-	await delay(600)
+	await delay(1000)
 	t.is(stat.execCount, 2)
 })
