@@ -56,6 +56,8 @@ const options = {}
 
 if (flags.w || flags.watch) {
 	options.watch = mergeToArr(flags.w, flags.watch)
+} else {
+	options.watch = ['.']
 }
 
 if (flags.i || flags.ignore) {

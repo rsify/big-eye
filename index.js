@@ -1,6 +1,5 @@
 /* eslint unicorn/no-process-exit: "off" */
 
-const path = require('path')
 const {spawn} = require('child_process')
 
 const chokidar = require('chokidar')
@@ -11,9 +10,8 @@ const pkg = require('./package.json')
 
 const defaults = {
 	ignore: [],
-	root: path.resolve(),
 	verbose: false,
-	watch: ['.']
+	watch: []
 }
 
 module.exports = (options = {}) => {
