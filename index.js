@@ -74,13 +74,15 @@ module.exports = (options = {}) => {
 
 	// Attach watcher
 	const watcher = chokidar.watch(opts.watch, {
-		ignored: opts.ignore
+		ignored: opts.ignore,
+		ignoreInitial: true
 	})
 
 	const x = debounce(execute, 10)
 
-	// Command executes automatically on first 'add' event
 	watcher.on('all', x)
+
+	x()
 
 	const cleanup = once(() => {
 		if (ref) {
