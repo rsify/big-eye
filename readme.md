@@ -8,7 +8,6 @@
 # install
 
 `$ npm install [-g] big-eye`
-*(omit -g flag to install big-eye in your project)*
 
 # usage
 
@@ -24,6 +23,7 @@ $ eye --help
 	  -w, --watch    Files/directories to be watched [Default: pwd]
 	  -i, --ignore   Files/directories to be ignored [Default: from .gitignore]
 	  -l, --lazy     Don't execute command on startup
+	  -d, --delay    Debounce delay in ms between command executions [Default: 10]
 	  -q, --quiet    Print only command output
 
 	Examples
@@ -31,7 +31,6 @@ $ eye --help
 	  $ eye node build.js -w src/
 	  $ eye python module.py -i *.pyc
 	  $ eye 'g++ main.cpp && ./a.out'
-
 ```
 
 # example

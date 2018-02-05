@@ -9,10 +9,11 @@ const once = require('once')
 const pkg = require('./package.json')
 
 const defaults = {
+	delay: 10,
 	ignore: [],
+	lazy: false,
 	verbose: false,
-	watch: [],
-	lazy: false
+	watch: []
 }
 
 module.exports = (command, options = {}) => {
@@ -83,7 +84,7 @@ module.exports = (command, options = {}) => {
 		ignoreInitial: true
 	})
 
-	const x = debounce(execute, 10)
+	const x = debounce(execute, options.delay)
 
 	watcher.on('all', x)
 

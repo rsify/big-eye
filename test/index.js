@@ -65,3 +65,25 @@ test('exec on change', async t => {
 
 	t.is(stat.execCount, 2)
 })
+
+test('debounce executions with delay option', async t => {
+	const root = struc({
+		a: ''
+	})
+
+	const {stat} = await spawnServer({
+		watch: root,
+		delay: 500
+	})
+
+	await delay(700)
+	t.is(stat.execCount, 1)
+
+	touch(root + '/a')
+	await delay(200)
+
+	t.is(stat.execCount, 1)
+
+	await delay(600)
+	t.is(stat.execCount, 2)
+})

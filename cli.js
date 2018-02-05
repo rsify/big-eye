@@ -18,6 +18,7 @@ const cli = meow(`
 	  -w, --watch    Files/directories to be watched [Default: pwd]
 	  -i, --ignore   Files/directories to be ignored [Default: from .gitignore]
 	  -l, --lazy     Don't execute command on startup
+	  -d, --delay    Debounce delay in ms between command executions [Default: 10]
 	  -q, --quiet    Print only command output
 
 	Examples
