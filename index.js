@@ -10,7 +10,7 @@ const once = require('once')
 const pkg = require('./package.json')
 
 const defaults = {
-	ignore: ['.git', 'node_modules'],
+	ignore: [],
 	root: path.resolve(),
 	verbose: false,
 	watch: ['.']

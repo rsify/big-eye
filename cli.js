@@ -1,9 +1,12 @@
 #!/usr/bin/env node
 
+const fs = require('fs')
+const os = require('os')
+
 const meow = require('meow')
 
-const logger = require('./lib/logger')
 const pkg = require('./package.json')
+const logger = require('./lib/logger')
 
 const bigEye = require('.')
 
@@ -57,6 +60,9 @@ if (flags.w || flags.watch) {
 
 if (flags.i || flags.ignore) {
 	options.ignore = mergeToArr(flags.i, flags.ignore)
+} else if (fs.existsSync('.gitignore')) {
+	const content = fs.readFileSync('.gitignore', 'utf8')
+	options.ignore = content.split(os.EOL).filter(x => x.length !== 0)
 }
 
 options.command = cli.input.join(' ')
