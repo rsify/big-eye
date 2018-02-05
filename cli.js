@@ -1,34 +1,33 @@
 #!/usr/bin/env node
 
-const argv = require('minimist')(process.argv.slice(2))
+const meow = require('meow')
+
 const logger = require('./lib/logger')
 const pkg = require('./package.json')
 
-const bigEye = require('./')
+const bigEye = require('.')
 
-const HELP =
-`usage: ${pkg.name} command [-w/--watch file/dir] [-i/--ignore file/dir] [-q/--quiet]
+const cli = meow(`
+	Usage
+	  $ eye <command>
 
-    required:
-        command: Specifies the command to be executed when a change is detected.
+	Options
+	  -w, --watch    Files/directories to be watched. [Default: pwd]
+	  -i, --ignore   Files/directories to be ignored. [Default: from .gitignore]
+	  -q, --quiet    Print only command output
 
-    options:
-        -w, --watch (default: current dir): Specifies files/dirs to
-            be watched. If a dir is provided it is watched recursively, unless
-			it's the pwd.
-			Can be used multiple times.
+	Examples
+	  $ eye node app.js
+	  $ eye node build.js -w src/
+	  $ eye python module.py -i *.pyc
+	  $ eye 'g++ main.cpp && ./a.out'
+`, {
+	version: `${pkg.name} (${pkg.version})\n` +
+		`maintained by ${pkg.author}\n` +
+		`bug reports: ${pkg.bugs}`
+})
 
-        -i, --ignore (default: .git, node_modules): Specifies files/dirs to
-            be ignored, even when specified by the --watch option.
-            Can be used multiple times.
-
-        -q, --quiet (default: false): pipe only command outputs to stdout
-`
-
-if (argv.h || argv.help) {
-	console.log(HELP)
-	process.exit()
-}
+const flags = cli.flags
 
 const mergeToArr = (x, y) => {
 	if (typeof x === 'undefined') {
@@ -47,47 +46,28 @@ const mergeToArr = (x, y) => {
 	}
 
 	const tmp = x.concat(y)
-	return tmp.length ? tmp : null
+	return tmp.length === 0 ? null : tmp
 }
 
-const obj = {}
+const options = {}
 
-const watch = mergeToArr(argv.w, argv.watch)
-if (watch) {
-	obj.watch = watch
+if (flags.w || flags.watch) {
+	options.watch = mergeToArr(flags.w, flags.watch)
 }
 
-const command = (function () {
-	const res = argv.x || argv.execute || argv._
-
-	if (Array.isArray(res)) {
-		return res.join(' ')
-	}
-
-	return res
-})()
-if (command) {
-	obj.command = command
+if (flags.i || flags.ignore) {
+	options.ignore = mergeToArr(flags.i, flags.ignore)
 }
 
-const ignore = mergeToArr(argv.i, argv.ignore)
-if (ignore) {
-	obj.ignore = ignore
-}
-
-const verbose = (function () {
-	if (argv.silent === false || argv.q === false) {
-		return false
-	}
-
-	return true
-})()
-if (verbose) {
-	obj.verbose = verbose
-}
+options.command = cli.input.join(' ')
+options.verbose = !(flags.quiet || flags.q)
 
 try {
-	bigEye(obj)
+	if (options.command.length === 0) {
+		cli.showHelp()
+	} else {
+		bigEye(options)
+	}
 } catch (err) {
 	logger('error', err.stack)
 	process.exit(1)

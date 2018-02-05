@@ -5,41 +5,42 @@
 [![travis](https://travis-ci.org/nikersify/big-eye.svg?branch=master)](https://travis-ci.org/nikersify/big-eye)
 [![coveralls](https://coveralls.io/repos/github/nikersify/big-eye/badge.svg?branch=master)](https://coveralls.io/github/nikersify/big-eye?branch=master)
 
+# install
+
+`$ npm install [-g] big-eye`
+*(omit -g flag to install big-eye in your project)*
+
 # usage
 
 ## cli
 
-### `big-eye (command) [-wiq]`
+```
+$ eye --help
 
-#### options
+  Usage
+    $ eye <command>
 
-##### `command` - required
+  Options
+    -w, --watch    Files/directories to be watched. [Default: pwd] [Can be used multiple times]
+    -i, --ignore   Files/directories to be ignored. [Default: from .gitignore] [Can be used multiple times]
+    -q, --quiet    Print only command output
+    -v, --version  Show version information
 
-Type: `string`
-Command to be executed when a change is detected.
-
-##### `-w` `--watch` - default: `.`
-
-File/directory/glob to be watched. If a dir is provided it is watched recursively (i.e. all of its children and their children etc.). Can be used multiple times.
-
-##### `-i` `--ignore` - default: `.git, node_modules`
-
-Takes an [anymatch](https://github.com/micromatch/anymatch) compatible definition.
-Files/dirs to be ignored, even when specified by the `--watch` option. Can be used multiple times.
-
-##### `-q` `--quiet` - default: `false`
-
-Skip all big-eye related output, print only command stdout & stderr outputs.
+  Examples
+    $ eye node app.js
+    $ eye node build.js -w src/
+    $ eye python module.py -i *.pyc
+    $ eye 'g++ main.cpp && ./a.out'
+```
 
 # example
 
 ```
-$ big-eye "echo hello!" -w lib/ -w index.js -i lib/tmp/
-
+$ eye "echo hello!" -w lib/ -w index.js -i lib/tmp/
 big-eye starting with config:
 	command: echo hello!
-	watch: lib
-	ignore: /srv/git/big-eye/.git, /srv/git/big-eye/node_modules
+	watch: lib/, index.js
+	ignore: lib/tmp/
 hello!
 big-eye command exited without error, waiting for changes...
 ```

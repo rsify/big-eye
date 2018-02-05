@@ -1,12 +1,13 @@
 {
   "name": "big-eye",
   "version": "0.0.2",
-  "description": "execute specified commands on file changes",
+  "description": "Execute commands on file changes",
   "bin": {
     "eye": "cli.js"
   },
   "main": "index.js",
   "repository": "https://github.com/Nikersify/big-eye",
+  "bugs": "htttps://github.com/nikersify/big-eye/issues",
   "author": "nikersify <nikersify@nikerino.com> (nikerino.com)",
   "license": "MIT",
   "scripts": {
@@ -18,7 +19,7 @@
     "chalk": "^1.1.3",
     "chokidar": "^2.0.0",
     "lodash.debounce": "^4.0.8",
-    "minimist": "^1.2.0",
+    "meow": "^4.0.0",
     "once": "^1.4.0"
   },
   "devDependencies": {
