@@ -67,14 +67,14 @@ if (flags.i || flags.ignore) {
 	options.ignore = content.split(os.EOL).filter(x => x.length !== 0)
 }
 
-options.command = cli.input.join(' ')
+const command = cli.input.join(' ')
 options.verbose = !(flags.quiet || flags.q)
 
 try {
-	if (options.command.length === 0) {
+	if (command.length === 0) {
 		cli.showHelp()
 	} else {
-		bigEye(options)
+		bigEye(command, options)
 	}
 } catch (err) {
 	logger('error', err.stack)

@@ -14,11 +14,15 @@ const defaults = {
 	watch: []
 }
 
-module.exports = (options = {}) => {
+module.exports = (command, options = {}) => {
 	const opts = Object.assign(defaults, options)
 
-	if (!opts.command) {
-		throw new Error('command not specified')
+	if (typeof command !== 'string') {
+		throw new TypeError(`command must be a string, got ${typeof command}`)
+	}
+
+	if (command.length === 0) {
+		throw new Error('command\'s length must be greater than 0')
 	}
 
 	if (!Array.isArray(opts.ignore)) {
@@ -32,7 +36,7 @@ module.exports = (options = {}) => {
 	const log = opts.verbose ? require('./lib/logger') : () => {}
 
 	const leadMsg = 'starting with config:\n' +
-		`\tcommand: ${opts.command}\n` +
+		`\tcommand: ${command}\n` +
 		`\twatch: ${opts.watch.join(', ')}\n` +
 		`\tignore: ${opts.ignore.join(', ')}`
 
@@ -53,7 +57,7 @@ module.exports = (options = {}) => {
 			flag = '/c'
 		}
 
-		ref = spawn(sh, [flag, opts.command], {
+		ref = spawn(sh, [flag, command], {
 			stdio: ['pipe', process.stdout, process.stderr]
 		})
 
