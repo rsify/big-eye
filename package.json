@@ -2,7 +2,9 @@
   "name": "big-eye",
   "version": "0.0.2",
   "description": "execute specified commands on file changes",
-  "bin": "cli.js",
+  "bin": {
+    "eye": "cli.js"
+  },
   "main": "index.js",
   "repository": "https://github.com/Nikersify/big-eye",
   "author": "nikersify <nikersify@nikerino.com> (nikerino.com)",
