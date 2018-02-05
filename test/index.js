@@ -37,6 +37,17 @@ test('initial exec', async t => {
 	t.is(stat.execCount, 1)
 })
 
+test('no initial exec with lazy option', async t => {
+	const {stat} = await spawnServer({
+		lazy: true
+	})
+
+	await delay(200)
+
+	t.is(await stat.connectionCount(), 0)
+	t.is(stat.execCount, 0)
+})
+
 test('exec on change', async t => {
 	const root = struc({
 		a: ''

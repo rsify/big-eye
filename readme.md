@@ -17,20 +17,21 @@
 ```
 $ eye --help
 
-  Usage
-    $ eye <command>
+	Usage
+	  $ eye <command>
 
-  Options
-    -w, --watch    Files/directories to be watched. [Default: pwd] [Can be used multiple times]
-    -i, --ignore   Files/directories to be ignored. [Default: from .gitignore] [Can be used multiple times]
-    -q, --quiet    Print only command output
-    -v, --version  Show version information
+	Options
+	  -w, --watch    Files/directories to be watched [Default: pwd]
+	  -i, --ignore   Files/directories to be ignored [Default: from .gitignore]
+	  -l, --lazy     Don't execute command on startup
+	  -q, --quiet    Print only command output
 
-  Examples
-    $ eye node app.js
-    $ eye node build.js -w src/
-    $ eye python module.py -i *.pyc
-    $ eye 'g++ main.cpp && ./a.out'
+	Examples
+	  $ eye node app.js
+	  $ eye node build.js -w src/
+	  $ eye python module.py -i *.pyc
+	  $ eye 'g++ main.cpp && ./a.out'
+
 ```
 
 # example

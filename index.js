@@ -11,7 +11,8 @@ const pkg = require('./package.json')
 const defaults = {
 	ignore: [],
 	verbose: false,
-	watch: []
+	watch: [],
+	lazy: false
 }
 
 module.exports = (command, options = {}) => {
@@ -86,7 +87,9 @@ module.exports = (command, options = {}) => {
 
 	watcher.on('all', x)
 
-	x()
+	if (!options.lazy) {
+		x()
+	}
 
 	const cleanup = once(() => {
 		if (ref) {

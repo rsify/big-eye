@@ -15,8 +15,9 @@ const cli = meow(`
 	  $ eye <command>
 
 	Options
-	  -w, --watch    Files/directories to be watched. [Default: pwd]
-	  -i, --ignore   Files/directories to be ignored. [Default: from .gitignore]
+	  -w, --watch    Files/directories to be watched [Default: pwd]
+	  -i, --ignore   Files/directories to be ignored [Default: from .gitignore]
+	  -l, --lazy     Don't execute command on startup
 	  -q, --quiet    Print only command output
 
 	Examples
@@ -65,6 +66,10 @@ if (flags.i || flags.ignore) {
 } else if (fs.existsSync('.gitignore')) {
 	const content = fs.readFileSync('.gitignore', 'utf8')
 	options.ignore = content.split(os.EOL).filter(x => x.length !== 0)
+}
+
+if (flags.l || flags.lazy) {
+	options.lazy = true
 }
 
 const command = cli.input.join(' ')
