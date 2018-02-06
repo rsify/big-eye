@@ -6,20 +6,15 @@ const chokidar = require('chokidar')
 const debounce = require('lodash.debounce')
 const execa = require('execa')
 
+const defaults = {
+	delay: 10,
+	ignore: [],
+	lazy: false,
+	watch: []
+}
+
 module.exports = (command, options = {}) => {
-	const defaults = {
-		delay: 10,
-		ignore: [],
-		lazy: false,
-		watch: []
-	}
-
-	options.delay = options.delay || 10
-	options.ignore = options.ignore || []
-	options.lazy = options.lazy || false
-	options.watch = options.watch || []
-
-	const opts = Object.assign(defaults, options)
+	const opts = Object.assign({}, defaults, options)
 
 	if (typeof command !== 'string') {
 		throw new TypeError(`command must be a string, got ${typeof command}`)

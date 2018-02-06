@@ -1,12 +1,11 @@
 #!/usr/bin/env node
-
-const fs = require('fs')
-const os = require('os')
+/* istanbul ignore file */
 
 const meow = require('meow')
 
-const pkg = require('./package.json')
 const logger = require('./lib/logger')
+const pkg = require('./package.json')
+const {flagsToOptions} = require('./lib/cli-helpers')
 
 const bigEye = require('.')
 
@@ -57,47 +56,7 @@ const cli = meow(`
 	}
 })
 
-const flags = cli.flags
-
-const mergeToArr = (x, y) => {
-	if (typeof x === 'undefined') {
-		x = []
-	}
-
-	if (typeof y === 'undefined') {
-		y = []
-	}
-
-	if (!Array.isArray(x)) {
-		x = [x]
-	}
-	if (!Array.isArray(y)) {
-		y = [y]
-	}
-
-	const tmp = x.concat(y)
-	return tmp.length === 0 ? null : tmp
-}
-
-const options = {}
-
-if (flags.watch) {
-	options.watch = mergeToArr(flags.w, flags.watch)
-} else {
-	options.watch = ['.']
-}
-
-let fromGitIgnore = false
-if (flags.ignore) {
-	options.ignore = mergeToArr(flags.i, flags.ignore)
-} else if (fs.existsSync('.gitignore')) {
-	const content = fs.readFileSync('.gitignore', 'utf8')
-	options.ignore = content.split(os.EOL).filter(x => x.length !== 0)
-	fromGitIgnore = true
-}
-
-options.lazy = flags.lazy
-
+const options = flagsToOptions(cli.flags)
 const command = cli.input.join(' ')
 
 try {
@@ -110,8 +69,7 @@ try {
 		const leadMsg = 'starting with config:\n' +
 			`\tcommand: ${command}\n` +
 			`\twatch: ${options.watch.join(', ')}\n` +
-			`\tignore: ${options.ignore.join(', ')}` +
-			(fromGitIgnore ? ' (from .gitignore)' : '')
+			`\tignore: ${options.ignore.join(', ')}`
 
 		log('info', leadMsg)
 
@@ -141,3 +99,5 @@ try {
 	logger('error', err.stack)
 	process.exit(1)
 }
+
+module.exports.flagsToOptions = flagsToOptions
