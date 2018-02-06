@@ -21,12 +21,12 @@ test('executing initial', async t => {
 })
 
 test('executing on update', async t => {
-	const root = struc({
+	const p = struc({
 		a: ''
 	})
 
 	const eye = makeEye({
-		watch: root,
+		watch: p,
 		lazy: true
 	})
 
@@ -35,7 +35,7 @@ test('executing on update', async t => {
 
 	await delay(300)
 
-	touch(root + '/a')
+	touch(p + '/a')
 	await delay(300)
 
 	t.true(spy.calledOnce)
@@ -43,12 +43,12 @@ test('executing on update', async t => {
 })
 
 test('changes', async t => {
-	const root = struc({
+	const p = struc({
 		a: ''
 	})
 
 	const eye = makeEye({
-		watch: root
+		watch: p
 	})
 
 	const spy = sinon.spy()
@@ -56,39 +56,39 @@ test('changes', async t => {
 
 	await delay(300)
 
-	touch(root + '/a')
+	touch(p + '/a')
 	await delay(300)
 	t.is(spy.callCount, 1)
-	t.true(spy.lastCall.calledWith('change', root + '/a'))
+	t.true(spy.lastCall.calledWith('change', p + '/a'))
 
-	await fs.writeFile(root + '/b', '')
+	await fs.writeFile(p + '/b', '')
 	await delay(300)
 	t.is(spy.callCount, 2)
-	t.true(spy.lastCall.calledWith('add', root + '/b'))
+	t.true(spy.lastCall.calledWith('add', p + '/b'))
 
-	await fs.remove(root + '/b')
+	await fs.remove(p + '/b')
 	await delay(300)
 	t.is(spy.callCount, 3)
-	t.true(spy.lastCall.calledWith('unlink', root + '/b'))
+	t.true(spy.lastCall.calledWith('unlink', p + '/b'))
 
-	await fs.mkdir(root + '/c')
+	await fs.mkdir(p + '/c')
 	await delay(300)
 	t.is(spy.callCount, 4)
-	t.true(spy.lastCall.calledWith('addDir', root + '/c'))
+	t.true(spy.lastCall.calledWith('addDir', p + '/c'))
 
-	await fs.remove(root + '/c')
+	await fs.remove(p + '/c')
 	await delay(300)
 	t.is(spy.callCount, 5)
-	t.true(spy.lastCall.calledWith('unlinkDir', root + '/c'))
+	t.true(spy.lastCall.calledWith('unlinkDir', p + '/c'))
 })
 
 test('success & failure', async t => {
-	const root = struc({
+	const p = struc({
 		a: ''
 	})
 
 	const {stat, eye} = await spawnServer({
-		watch: root
+		watch: p
 	})
 
 	const successSpy = sinon.spy()
@@ -104,7 +104,7 @@ test('success & failure', async t => {
 	await delay(300)
 	t.is(successSpy.callCount, 1)
 	t.is(failureSpy.callCount, 0)
-	touch(root + '/a')
+	touch(p + '/a')
 
 	await delay(300)
 	stat.firstSocket.write('exit 69')
@@ -120,12 +120,12 @@ test('success & failure', async t => {
 })
 
 test('killed', async t => {
-	const root = struc({
+	const p = struc({
 		a: ''
 	})
 
 	const eye = makeEye({
-		watch: root
+		watch: p
 	})
 
 	const spy = sinon.spy()
@@ -134,7 +134,7 @@ test('killed', async t => {
 	await delay(300)
 	t.true(spy.notCalled)
 
-	touch(root + '/a')
+	touch(p + '/a')
 	await delay(300)
 
 	t.true(spy.calledOnce)

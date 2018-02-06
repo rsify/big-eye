@@ -5,7 +5,7 @@ import test from 'ava'
 import spawnServer from './helpers/server'
 import touch from './helpers/touch'
 
-test('initial exec', async t => {
+test('initial', async t => {
 	const {stat} = await spawnServer()
 
 	await delay(500)
@@ -15,31 +15,31 @@ test('initial exec', async t => {
 	t.is(stat.execCount, 1)
 })
 
-test('exec on change', async t => {
-	const root = struc({
+test('on change', async t => {
+	const p = struc({
 		a: ''
 	})
 
 	const {stat} = await spawnServer({
-		watch: root
+		watch: p
 	})
 
 	await delay(500)
 	t.is(stat.execCount, 1)
 
-	touch(root + '/a')
+	touch(p + '/a')
 	await delay(500)
 
 	t.is(stat.execCount, 2)
 })
 
-test('restart after child exit', async t => {
-	const root = struc({
+test('after child exit', async t => {
+	const p = struc({
 		a: ''
 	})
 
 	const {stat} = await spawnServer({
-		watch: root
+		watch: p
 	})
 
 	await delay(500)
@@ -51,13 +51,13 @@ test('restart after child exit', async t => {
 	await delay(100)
 	t.is(await stat.connectionCount(), 0)
 
-	touch(root + '/a')
+	touch(p + '/a')
 	await delay(500)
 
 	t.is(await stat.connectionCount(), 1)
 })
 
-test('no initial exec with lazy option', async t => {
+test('no initial with lazy option', async t => {
 	const {stat} = await spawnServer({
 		lazy: true
 	})
@@ -69,57 +69,57 @@ test('no initial exec with lazy option', async t => {
 })
 
 test('ignores files with ignore option', async t => {
-	const root = struc({
+	const p = struc({
 		a: ''
 	})
 
 	const {stat} = await spawnServer({
-		watch: root,
-		ignore: root + '/a',
+		watch: p,
+		ignore: p + '/a',
 		lazy: true
 	})
 
 	await delay(100)
-	touch(root + '/a')
+	touch(p + '/a')
 
 	await delay(1000)
 	t.is(stat.execCount, 0)
 })
 
 test('ignores directories with ignore option', async t => {
-	const root = struc({
+	const p = struc({
 		a: {
 			b: ''
 		}
 	})
 
 	const {stat} = await spawnServer({
-		watch: root,
-		ignore: root + '/a',
+		watch: p,
+		ignore: p + '/a',
 		lazy: true
 	})
 
 	await delay(100)
-	touch(root + '/a/b')
+	touch(p + '/a/b')
 
 	await delay(1000)
 	t.is(stat.execCount, 0)
 })
 
 test('debounce executions with delay option', async t => {
-	const root = struc({
+	const p = struc({
 		a: ''
 	})
 
 	const {stat} = await spawnServer({
-		watch: root,
+		watch: p,
 		delay: 500
 	})
 
 	await delay(1000)
 	t.is(stat.execCount, 1)
 
-	touch(root + '/a')
+	touch(p + '/a')
 	await delay(500)
 
 	t.is(stat.execCount, 1)
