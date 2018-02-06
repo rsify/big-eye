@@ -1,11 +1,3 @@
-// Using a server because you can not only check when it executed
-// But also if it is still running
-
-// Spawn a server
-// Create a port with get-port
-// Command: node fixtures/child.js port
-// Watch (struc)
-
 import EventEmitter from 'events'
 import path from 'path'
 import net from 'net'
@@ -28,6 +20,7 @@ const countConnections = server => () => {
 
 export default async (eyeOpts = {}) => {
 	const port = await getPort()
+	const sockets = new Set()
 
 	const childPath = path.resolve(__dirname, '../fixtures/child.js')
 	const eye = bigEye(`node ${childPath} ${port}`, eyeOpts)
@@ -36,9 +29,13 @@ export default async (eyeOpts = {}) => {
 	const events = new EventEmitter()
 
 	let execCount = 0
-	server.on('connection', () => {
+	server.on('connection', sock => {
+		sockets.add(sock)
 		events.emit('executed')
 		execCount++
+		sock.on('close', () => {
+			sockets.delete(sock)
+		})
 	})
 
 	return {
@@ -46,6 +43,9 @@ export default async (eyeOpts = {}) => {
 		server,
 		eye,
 		stat: {
+			get sockets() {
+				return sockets
+			},
 			get execCount() {
 				return execCount
 			},

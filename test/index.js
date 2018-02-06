@@ -38,6 +38,30 @@ test('exec on change', async t => {
 	t.is(stat.execCount, 2)
 })
 
+test('restart after child exit', async t => {
+	const root = struc({
+		a: ''
+	})
+
+	const {stat} = await spawnServer({
+		watch: root
+	})
+
+	await delay(500)
+	t.is(await stat.connectionCount(), 1)
+	const socket = stat.sockets.values().next().value
+
+	socket.write('exit 1')
+
+	await delay(100)
+	t.is(await stat.connectionCount(), 0)
+
+	touch(root + '/a')
+	await delay(500)
+
+	t.is(await stat.connectionCount(), 1)
+})
+
 test('no initial exec with lazy option', async t => {
 	const {stat} = await spawnServer({
 		lazy: true
