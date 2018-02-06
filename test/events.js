@@ -14,7 +14,7 @@ test('executing initial', async t => {
 	const spy = sinon.spy()
 	eye.on('executing', spy)
 
-	await delay(100)
+	await delay(300)
 
 	t.true(spy.calledOnce)
 	t.true(spy.calledWith())
@@ -33,10 +33,10 @@ test('executing on update', async t => {
 	const spy = sinon.spy()
 	eye.on('executing', spy)
 
-	await delay(300)
+	await delay(500)
 
 	touch(p + '/a')
-	await delay(300)
+	await delay(500)
 
 	t.true(spy.calledOnce)
 	t.true(spy.calledWith())
@@ -54,30 +54,30 @@ test('changes', async t => {
 	const spy = sinon.spy()
 	eye.on('changes', spy)
 
-	await delay(300)
+	await delay(500)
 
 	touch(p + '/a')
-	await delay(300)
+	await delay(500)
 	t.is(spy.callCount, 1)
 	t.true(spy.lastCall.calledWith('change', p + '/a'))
 
 	await fs.writeFile(p + '/b', '')
-	await delay(300)
+	await delay(500)
 	t.is(spy.callCount, 2)
 	t.true(spy.lastCall.calledWith('add', p + '/b'))
 
 	await fs.remove(p + '/b')
-	await delay(300)
+	await delay(500)
 	t.is(spy.callCount, 3)
 	t.true(spy.lastCall.calledWith('unlink', p + '/b'))
 
 	await fs.mkdir(p + '/c')
-	await delay(300)
+	await delay(500)
 	t.is(spy.callCount, 4)
 	t.true(spy.lastCall.calledWith('addDir', p + '/c'))
 
 	await fs.remove(p + '/c')
-	await delay(300)
+	await delay(500)
 	t.is(spy.callCount, 5)
 	t.true(spy.lastCall.calledWith('unlinkDir', p + '/c'))
 })
@@ -99,17 +99,17 @@ test('success & failure', async t => {
 
 	t.is(successSpy.callCount, 0)
 
-	await delay(300)
+	await delay(2000)
 	stat.firstSocket.write('exit 0')
-	await delay(300)
+	await delay(500)
 	t.is(successSpy.callCount, 1)
 	t.is(failureSpy.callCount, 0)
 	touch(p + '/a')
 
-	await delay(300)
+	await delay(500)
 	stat.firstSocket.write('exit 69')
 
-	await delay(300)
+	await delay(500)
 	t.is(successSpy.callCount, 1)
 	t.is(failureSpy.callCount, 1)
 
@@ -131,11 +131,11 @@ test('killed', async t => {
 	const spy = sinon.spy()
 	eye.on('killed', spy)
 
-	await delay(300)
+	await delay(500)
 	t.true(spy.notCalled)
 
 	touch(p + '/a')
-	await delay(300)
+	await delay(500)
 
 	t.true(spy.calledOnce)
 	t.true(spy.calledWith('SIGTERM'))
