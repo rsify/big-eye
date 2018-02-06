@@ -2,7 +2,7 @@ const net = require('net')
 
 if (typeof process.argv[2] !== 'undefined') {
 	const port = process.argv[2]
-	const socket = net.connect(port)
+	const socket = net.connect(port, '127.0.0.1')
 
 	socket.on('data', buffer => {
 		const data = buffer.toString()
@@ -16,6 +16,8 @@ if (typeof process.argv[2] !== 'undefined') {
 			}
 		}
 	})
+
+	socket.on('error', () => {})
 } else {
 	process.stdin.resume()
 }

@@ -23,7 +23,10 @@ export default async (eyeOpts = {}) => {
 
 	const eye = makeEye(eyeOpts, port)
 
-	const server = net.createServer().listen(port)
+	const server = net.createServer(sock => {
+		sock.on('error', () => {})
+	}).listen(port)
+
 	const events = new EventEmitter()
 
 	let execCount = 0

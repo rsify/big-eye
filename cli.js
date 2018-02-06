@@ -1,11 +1,13 @@
 #!/usr/bin/env node
+'use strict'
+
 /* istanbul ignore file */
 
 const meow = require('meow')
 
 const logger = require('./lib/logger')
 const pkg = require('./package.json')
-const {flagsToOptions} = require('./lib/cli-helpers')
+const flagsToOptions = require('./lib/cli-helpers').flagsToOptions
 
 const bigEye = require('.')
 

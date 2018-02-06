@@ -1,3 +1,5 @@
+'use strict'
+
 /* eslint unicorn/no-process-exit: "off" */
 
 const EventEmitter = require('events')
@@ -13,7 +15,11 @@ const defaults = {
 	watch: []
 }
 
-module.exports = (command, options = {}) => {
+module.exports = (command, options) => {
+	if (!options) {
+		options = {}
+	}
+
 	const opts = Object.assign({}, defaults, options)
 
 	if (typeof command !== 'string') {
