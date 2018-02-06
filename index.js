@@ -13,14 +13,12 @@ module.exports = (command, options = {}) => {
 		delay: 10,
 		ignore: [],
 		lazy: false,
-		verbose: false,
 		watch: []
 	}
 
 	options.delay = options.delay || 10
 	options.ignore = options.ignore || []
 	options.lazy = options.lazy || false
-	options.verbose = options.verbose || false
 	options.watch = options.watch || []
 
 	const opts = Object.assign(defaults, options)
@@ -43,10 +41,6 @@ module.exports = (command, options = {}) => {
 
 	if (typeof opts.lazy !== 'boolean') {
 		throw new TypeError(`lazy must be a boolean, got ${typeof opts.lazy}`)
-	}
-
-	if (typeof opts.verbose !== 'boolean') {
-		throw new TypeError(`verbose must be a boolean, got ${typeof opts.verbose}`)
 	}
 
 	if (typeof opts.watch !== 'string' && !Array.isArray(opts.watch)) {

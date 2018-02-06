@@ -95,7 +95,6 @@ if (flags.ignore) {
 }
 
 options.lazy = flags.lazy
-options.verbose = !flags.quiet
 
 const command = cli.input.join(' ')
 

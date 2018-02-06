@@ -48,16 +48,6 @@ test('lazy must be a boolean', t => {
 	t.is(err.message, 'lazy must be a boolean, got object')
 })
 
-test('verbose must be a boolean', t => {
-	const err = t.throws(() => {
-		bigEye('echo', {
-			verbose: {}
-		})
-	}, TypeError)
-
-	t.is(err.message, 'verbose must be a boolean, got object')
-})
-
 test('watch must be an array or string', t => {
 	const err = t.throws(() => {
 		bigEye('echo', {
