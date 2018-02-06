@@ -1,10 +1,9 @@
 import EventEmitter from 'events'
-import path from 'path'
 import net from 'net'
 
 import getPort from 'get-port'
 
-import bigEye from '../..'
+import makeEye from './make-eye'
 
 const countConnections = server => () => {
 	return new Promise((resolve, reject) => {
@@ -22,8 +21,7 @@ export default async (eyeOpts = {}) => {
 	const port = await getPort()
 	const sockets = new Set()
 
-	const childPath = path.resolve(__dirname, '../fixtures/child.js')
-	const eye = bigEye(`node ${childPath} ${port}`, eyeOpts)
+	const eye = makeEye(eyeOpts, port)
 
 	const server = net.createServer().listen(port)
 	const events = new EventEmitter()
@@ -45,6 +43,9 @@ export default async (eyeOpts = {}) => {
 		stat: {
 			get sockets() {
 				return sockets
+			},
+			get firstSocket() {
+				return sockets.values().next().value
 			},
 			get execCount() {
 				return execCount

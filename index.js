@@ -1,12 +1,10 @@
 /* eslint unicorn/no-process-exit: "off" */
 
-const {spawn} = require('child_process')
+const EventEmitter = require('events')
 
 const chokidar = require('chokidar')
 const debounce = require('lodash.debounce')
-const once = require('once')
-
-const pkg = require('./package.json')
+const execa = require('execa')
 
 module.exports = (command, options = {}) => {
 	const defaults = {
@@ -55,46 +53,41 @@ module.exports = (command, options = {}) => {
 		opts.watch = [opts.watch]
 	}
 
-	const log = opts.verbose ? require('./lib/logger') : () => {}
-
-	const leadMsg = 'starting with config:\n' +
-		`\tcommand: ${command}\n` +
-		`\twatch: ${opts.watch.join(', ')}\n` +
-		`\tignore: ${opts.ignore.join(', ')}`
-
-	log('info', leadMsg)
+	const events = new EventEmitter()
 
 	let ref
 	const execute = () => {
-		if (ref) {
-			ref.kill('SIGTERM')
-			log('info', 'file changes detected, restarting...')
-		}
-
-		let sh = 'sh'
-		let flag = '-c'
-
-		if (process.platform === 'win32') {
-			sh = 'cmd'
-			flag = '/c'
-		}
-
-		ref = spawn(sh, [flag, command], {
-			stdio: ['pipe', process.stdout, process.stderr]
-		})
-
-		ref.on('close', code => {
-			if (code !== null) {
-				// Child exited on its own
-				if (code === 0) {
-					log('success', 'command exited without error, ' +
-						'waiting for changes...')
-				} else {
-					log('error', `command exited with code ${code}, ` +
-						'waiting for changes...')
-				}
-				ref = null
+		new Promise(resolve => {
+			if (ref) {
+				ref.kill('SIGTERM')
+				ref.on('close', resolve)
+			} else {
+				resolve()
 			}
+		}).then(() => {
+			ref = execa.shell(command, {
+				stdio: 'inherit'
+			})
+
+			ref.createdTime = Number(new Date())
+
+			events.emit('executing')
+
+			ref.on('close', (code, signal) => {
+				if (code === null) {
+					events.emit('killed', signal)
+				} else {
+					const time = Number(new Date()) - ref.createdTime
+
+					if (code === 0) {
+						events.emit('success', time)
+					} else {
+						events.emit('failure', time, code)
+					}
+				}
+
+				ref = null
+			})
 		})
 	}
 
@@ -106,31 +99,16 @@ module.exports = (command, options = {}) => {
 
 	const x = debounce(execute, options.delay)
 
-	watcher.on('all', x)
+	watcher.on('all', (event, path) => {
+		events.emit('changes', event, path)
+		x()
+	})
+
+	watcher.on('ready', () => events.emit('ready'))
 
 	if (!options.lazy) {
 		x()
 	}
 
-	const cleanup = once(() => {
-		if (ref) {
-			log('info', 'cleaning up...')
-			ref.kill('SIGINT')
-		}
-
-		watcher.close()
-	})
-
-	process.on('exit', cleanup)
-	process.on('SIGINT', cleanup)
-	process.on('uncaughtException', e => {
-		log('error', `uncaught exception in ${pkg.name}, stack trace:`)
-		log('error', e.stack)
-		process.exit(1)
-	})
-
-	return {
-		_options: opts,
-		stop: cleanup
-	}
+	return events
 }

@@ -87,11 +87,13 @@ if (flags.watch) {
 	options.watch = ['.']
 }
 
+let fromGitIgnore = false
 if (flags.ignore) {
 	options.ignore = mergeToArr(flags.i, flags.ignore)
 } else if (fs.existsSync('.gitignore')) {
 	const content = fs.readFileSync('.gitignore', 'utf8')
 	options.ignore = content.split(os.EOL).filter(x => x.length !== 0)
+	fromGitIgnore = true
 }
 
 options.lazy = flags.lazy
@@ -102,7 +104,38 @@ try {
 	if (command.length === 0) {
 		cli.showHelp()
 	} else {
-		bigEye(command, options)
+		const log = options.quiet ? () => {} : require('./lib/logger')
+		const eye = bigEye(command, options)
+
+		const leadMsg = 'starting with config:\n' +
+			`\tcommand: ${command}\n` +
+			`\twatch: ${options.watch.join(', ')}\n` +
+			`\tignore: ${options.ignore.join(', ')}` +
+			(fromGitIgnore ? ' (from .gitignore)' : '')
+
+		log('info', leadMsg)
+
+		eye.on('executing', () => {
+			log('info', 'executing child...')
+		})
+
+		eye.on('changes', (event, path) => {
+			log('info', `file changes detected (${event} ${path})`)
+		})
+
+		eye.on('success', time => {
+			log('success', `command exited without error (${time}ms), ` +
+				'waiting for changes...')
+		})
+
+		eye.on('failure', (time, code) => {
+			log('error', `command exited with code ${code} (${time}ms), ` +
+				'waiting for changes...')
+		})
+
+		eye.on('killed', signal => {
+			log('info', `child killed (${signal})`)
+		})
 	}
 } catch (err) {
 	logger('error', err.stack)

@@ -1,14 +1,9 @@
-import fs from 'fs'
-
 import delay from 'delay'
 import struc from 'struc'
 import test from 'ava'
 
 import spawnServer from './helpers/server'
-
-const touch = filePath => {
-	fs.closeSync(fs.openSync(filePath, 'w'))
-}
+import touch from './helpers/touch'
 
 test('initial exec', async t => {
 	const {stat} = await spawnServer()
@@ -49,7 +44,7 @@ test('restart after child exit', async t => {
 
 	await delay(500)
 	t.is(await stat.connectionCount(), 1)
-	const socket = stat.sockets.values().next().value
+	const socket = stat.firstSocket
 
 	socket.write('exit 1')
 
