@@ -1,9 +1,9 @@
-# big-eye [![npm](https://img.shields.io/npm/v/big-eye.svg)](https://www.npmjs.com/package/big-eye)
+# big-eye
+[![Travis build](https://travis-ci.org/nikersify/big-eye.svg?branch=master)](https://travis-ci.org/nikersify/big-eye)
+[![AppVeyor build](https://ci.appveyor.com/api/projects/status/f6bhfklqk61bnqrc?svg=true)](https://ci.appveyor.com/project/nikersify/big-eye)
+[![Coveralls](https://coveralls.io/repos/github/nikersify/big-eye/badge.svg?branch=master)](https://coveralls.io/github/nikersify/big-eye?branch=master)
 
 > execute specified command[s] on file change[s]
-
-[![travis](https://travis-ci.org/nikersify/big-eye.svg?branch=master)](https://travis-ci.org/nikersify/big-eye)
-[![coveralls](https://coveralls.io/repos/github/nikersify/big-eye/badge.svg?branch=master)](https://coveralls.io/github/nikersify/big-eye?branch=master)
 
 # install
 

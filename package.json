@@ -11,8 +11,7 @@
   "author": "nikersify <nikersify@nikerino.com> (nikerino.com)",
   "license": "MIT",
   "scripts": {
-    "test": "xo && ava",
-    "coverage": "nyc ava",
+    "test": "xo && nyc ava",
     "report": "nyc report --reporter=html && open coverage/index.html"
   },
   "dependencies": {
