@@ -29,7 +29,7 @@ $ eye --help
 	Examples
 	  $ eye node app.js
 	  $ eye node build.js -w src/
-	  $ eye python module.py -i *.pyc
+	  $ eye python module.py -i '*.pyc'
 	  $ eye 'g++ main.cpp && ./a.out'
 ```
 

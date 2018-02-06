@@ -23,7 +23,7 @@ const cli = meow(`
 	Examples
 	  $ eye node app.js
 	  $ eye node build.js -w src/
-	  $ eye python module.py -i *.pyc
+	  $ eye python module.py -i '*.pyc'
 	  $ eye 'g++ main.cpp && ./a.out'
 `, {
 	version: `${pkg.name} (${pkg.version})\n` +
