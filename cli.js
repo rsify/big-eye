@@ -58,7 +58,7 @@ const cli = meow(`
 	}
 })
 
-const options = flagsToOptions(cli.flags)
+const options = flagsToOptions(process.cwd(), cli.flags)
 const command = cli.input.join(' ')
 
 try {
@@ -101,5 +101,3 @@ try {
 	logger('error', err.stack)
 	process.exit(1)
 }
-
-module.exports.flagsToOptions = flagsToOptions

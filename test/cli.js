@@ -13,11 +13,13 @@ const cli = (args, opts) => execa(path.join(moduleRoot, 'cli.js'), args, opts)
 
 test('is executable', async t => {
 	const {stdout} = await cli(['--version'])
-	t.is(stdout.indexOf(pkg.name), 0)
+	t.not(stdout.indexOf(pkg.name), -1)
 })
 
 test('converts flags to options', t => {
-	t.deepEqual(flagsToOptions({
+	const emptyDir = struc({})
+
+	t.deepEqual(flagsToOptions(emptyDir, {
 		watch: 'a',
 		ignore: 'b',
 		lazy: true,
@@ -29,7 +31,7 @@ test('converts flags to options', t => {
 		delay: 10
 	})
 
-	t.deepEqual(flagsToOptions({
+	t.deepEqual(flagsToOptions(emptyDir, {
 		watch: ['a'],
 		ignore: 'b',
 		lazy: false
@@ -39,20 +41,16 @@ test('converts flags to options', t => {
 		lazy: false
 	})
 
-	process.chdir(struc({
-		'.gitignore': 'hello\nworld\n'
-	}))
-
-	t.deepEqual(flagsToOptions({}), {
-		watch: ['.'],
-		ignore: ['hello', 'world']
-	})
-
-	process.chdir(struc({}))
-
-	t.deepEqual(flagsToOptions({}), {
+	t.deepEqual(flagsToOptions(emptyDir, {}), {
 		watch: ['.'],
 		ignore: []
+	})
+
+	t.deepEqual(flagsToOptions(struc({
+		'.gitignore': 'hello\nworld\n'
+	}), {}), {
+		watch: ['.'],
+		ignore: ['hello', 'world']
 	})
 })
 
