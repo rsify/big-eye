@@ -91,7 +91,7 @@ module.exports = (file, args, options) => {
 
 			ref.createdTime = Number(new Date())
 
-			events.emit('executing')
+			events.emit('executing', ref)
 
 			ref.on('close', (code, signal) => {
 				if (code === null) {

@@ -1,3 +1,4 @@
+import {ChildProcess} from 'child_process'
 import path from 'path'
 
 import delay from 'delay'
@@ -19,7 +20,7 @@ test('executing initial', async t => {
 	await delay(1000)
 
 	t.true(spy.calledOnce)
-	t.true(spy.calledWith())
+	t.is(spy.args[0][0].constructor, ChildProcess)
 })
 
 test('executing on update', async t => {
@@ -41,7 +42,7 @@ test('executing on update', async t => {
 	await delay(1000)
 
 	t.true(spy.calledOnce)
-	t.true(spy.calledWith())
+	t.is(spy.args[0][0].constructor, ChildProcess)
 })
 
 test('changes', async t => {
