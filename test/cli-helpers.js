@@ -77,8 +77,8 @@ test('parseCommand no cmd & invalid package.json', t => {
 		parseCommand(cwd, '')
 	})
 
-	t.is(err.message, 'no command specified & missing package.json' +
-		' start script (SyntaxError: Unexpected end of input)')
+	t.true(err.message.indexOf('no command specified & missing package.json' +
+		' start script (') === 0)
 })
 
 test('parseCommand no cmd & scripts in package.json', t => {
