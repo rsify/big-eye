@@ -7,7 +7,13 @@ const meow = require('meow')
 
 const logger = require('./lib/logger')
 const pkg = require('./package.json')
-const flagsToOptions = require('./lib/cli-helpers').flagsToOptions
+
+const helpers = require('./lib/cli-helpers')
+
+const flagsToOptions = helpers.flagsToOptions
+const parseCommand = helpers.parseCommand
+
+const cwd = process.cwd()
 
 const bigEye = require('.')
 
@@ -23,10 +29,13 @@ const cli = meow(`
 	  -q, --quiet    Print only command output
 
 	Examples
-	  $ eye node app.js
-	  $ eye node build.js -w src/
+	  $ eye app.js
+	  $ eye build.js -w src/
 	  $ eye python module.py -i '*.pyc'
 	  $ eye 'g++ main.cpp && ./a.out'
+
+	Tips
+	  Run eye without arguments to execute the npm start script.
 `, {
 	version: `${pkg.name} (${pkg.version})\n` +
 		`maintained by ${pkg.author}\n` +
@@ -58,18 +67,19 @@ const cli = meow(`
 	}
 })
 
-const options = flagsToOptions(process.cwd(), cli.flags)
-const command = cli.input.join(' ')
+const options = flagsToOptions(cwd, cli.flags)
+const command = parseCommand(cwd, cli.input.join(' '))
 
 try {
 	if (command.length === 0) {
 		cli.showHelp()
 	} else {
+		const cmd = command.file + ' ' + command.args.join(' ')
 		const log = options.quiet ? () => {} : require('./lib/logger')
-		const eye = bigEye(command, options)
+		const eye = bigEye(cmd, options)
 
 		const leadMsg = 'starting with config:\n' +
-			`\tcommand: ${command}\n` +
+			`\tcommand: ${cmd}\n` +
 			`\twatch: ${options.watch.join(', ')}\n` +
 			`\tignore: ${options.ignore.join(', ')}`
 

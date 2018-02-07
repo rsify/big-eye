@@ -27,10 +27,13 @@ $ eye --help
 	  -q, --quiet    Print only command output
 
 	Examples
-	  $ eye node app.js
-	  $ eye node build.js -w src/
+	  $ eye app.js
+	  $ eye build.js -w src/
 	  $ eye python module.py -i '*.pyc'
 	  $ eye 'g++ main.cpp && ./a.out'
+
+	Tips
+	  Run eye without arguments to execute the npm start script.
 ```
 
 # example
