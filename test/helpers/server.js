@@ -21,7 +21,7 @@ export default async (eyeOpts = {}) => {
 	const port = await getPort()
 	const sockets = new Set()
 
-	const eye = makeEye(eyeOpts, port)
+	const eye = makeEye(eyeOpts, [port])
 
 	const server = net.createServer(sock => {
 		sock.on('error', () => {})

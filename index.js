@@ -15,35 +15,54 @@ const defaults = {
 	watch: []
 }
 
-module.exports = (command, options) => {
-	if (!options) {
+// String, Array, Object
+// file, [args], [options]
+module.exports = (file, args, options) => {
+	// (file)
+	if (typeof args === 'undefined' && typeof options === 'undefined') {
+		options = {}
+		args = []
+	}
+
+	// ('file', {})
+	if (typeof options === 'undefined' && !Array.isArray(args)) {
+		options = args
+		args = []
+	}
+
+	// ('file', [])
+	if (typeof options === 'undefined' && Array.isArray(args)) {
 		options = {}
 	}
 
 	const opts = Object.assign({}, defaults, options)
 
-	if (typeof command !== 'string') {
-		throw new TypeError(`command must be a string, got ${typeof command}`)
+	if (typeof file !== 'string') {
+		throw new TypeError(`file must be a string, got ${typeof file}`)
 	}
 
-	if (command.length === 0) {
-		throw new Error('command\'s length must be greater than 0')
+	if (file.length === 0) {
+		throw new Error('file\'s length must be greater than 0')
+	}
+
+	if (!Array.isArray(args)) {
+		throw new TypeError(`args must be an array, got ${typeof args}`)
 	}
 
 	if (typeof opts.delay !== 'number') {
-		throw new TypeError(`delay must be a number, got ${typeof opts.delay}`)
+		throw new TypeError(`opts.delay must be a number, got ${typeof opts.delay}`)
 	}
 
 	if (typeof opts.ignore !== 'string' && !Array.isArray(opts.ignore)) {
-		throw new TypeError(`ignore must be an array or string, got ${typeof opts.ignore}`)
+		throw new TypeError(`opts.ignore must be an array or string, got ${typeof opts.ignore}`)
 	}
 
 	if (typeof opts.lazy !== 'boolean') {
-		throw new TypeError(`lazy must be a boolean, got ${typeof opts.lazy}`)
+		throw new TypeError(`opts.lazy must be a boolean, got ${typeof opts.lazy}`)
 	}
 
 	if (typeof opts.watch !== 'string' && !Array.isArray(opts.watch)) {
-		throw new TypeError(`watch must be an array or string, got ${typeof opts.watch}`)
+		throw new TypeError(`opts.watch must be an array or string, got ${typeof opts.watch}`)
 	}
 
 	if (!Array.isArray(opts.ignore)) {
@@ -66,7 +85,7 @@ module.exports = (command, options) => {
 				resolve()
 			}
 		}).then(() => {
-			ref = execa.shell(command, {
+			ref = execa(file, args, {
 				stdio: 'inherit'
 			})
 

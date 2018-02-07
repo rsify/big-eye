@@ -74,12 +74,11 @@ try {
 	if (command.length === 0) {
 		cli.showHelp()
 	} else {
-		const cmd = command.file + ' ' + command.args.join(' ')
 		const log = options.quiet ? () => {} : require('./lib/logger')
-		const eye = bigEye(cmd, options)
+		const eye = bigEye(command.file, command.args, options)
 
 		const leadMsg = 'starting with config:\n' +
-			`\tcommand: ${cmd}\n` +
+			`\tcommand: ${command.file + ' ' + command.args.join(' ')}\n` +
 			`\twatch: ${options.watch.join(', ')}\n` +
 			`\tignore: ${options.ignore.join(', ')}`
 
