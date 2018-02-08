@@ -215,7 +215,7 @@ test('parseCommand file missing', t => {
 		parseCommand(cwd, name)
 	})
 
-	t.is(err.message, `${name} does not exist`)
+	t.is(err.message, `${name} is not executable`)
 })
 
 test('parseCommand executable file from PATH', t => {
@@ -229,6 +229,49 @@ test('parseCommand executable file from PATH', t => {
 
 test('parseCommand executable file from node_modules', async t => {
 	const cwd = struc({
+		// eslint-disable-next-line camelcase
+		node_modules: {
+			'.bin': {
+				foo: ''
+			}
+		}
+	})
+
+	const {newPath} = await markExecutable(path.join(cwd, 'node_modules/.bin/foo'))
+
+	t.deepEqual(parseCommand(cwd, 'foo --bar baz'), {
+		file: newPath,
+		args: ['--bar', 'baz']
+	})
+})
+
+test('parseCommand directory', t => {
+	const cwd = struc({
+		foo: {}
+	})
+
+	const err = t.throws(() => {
+		parseCommand(cwd, 'foo')
+	}, Error)
+
+	t.is(err.message, 'foo is not executable')
+})
+
+test('parseCommand directory with .js extension', t => {
+	const cwd = struc({
+		'foo.js': {}
+	})
+
+	const err = t.throws(() => {
+		parseCommand(cwd, 'foo.js')
+	}, Error)
+
+	t.is(err.message, 'foo.js is not executable')
+})
+
+test('parseCommand directory and node_module with the same name', async t => {
+	const cwd = struc({
+		foo: {},
 		// eslint-disable-next-line camelcase
 		node_modules: {
 			'.bin': {
