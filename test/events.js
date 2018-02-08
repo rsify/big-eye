@@ -85,6 +85,33 @@ test('changes', async t => {
 	t.true(spy.lastCall.calledWith('unlinkDir', path.join(p + '/c')))
 })
 
+test('changes debounced', async t => {
+	const p = struc({
+		a: ''
+	})
+
+	const eye = makeEye({
+		watch: p,
+		delay: 500
+	})
+
+	const spy = sinon.spy()
+	eye.on('changes', spy)
+
+	await delay(1000)
+
+	touch(p + '/a')
+	await delay(100)
+	touch(p + '/a')
+	await delay(800)
+	t.is(spy.callCount, 1)
+
+	await delay(1000)
+	touch(p + '/a')
+	await delay(1000)
+	t.is(spy.callCount, 2)
+})
+
 test('success & failure', async t => {
 	const p = struc({
 		a: ''
