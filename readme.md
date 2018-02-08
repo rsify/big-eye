@@ -27,7 +27,7 @@ $ eye --help
 	  -w, --watch    Files/directories to be watched [Default: pwd]
 	  -i, --ignore   Files/directories to be ignored [Default: from .gitignore]
 	  -l, --lazy     Don't execute command on startup
-	  -d, --delay    Debounce delay in ms between command executions [Default: 10]
+	  -d, --delay    Debounce delay in ms between command executions [Default: 100]
 	  -q, --quiet    Print only command output
 
 	Examples
@@ -88,7 +88,7 @@ on watched file change.
 ##### delay
 
 Type: `Number`<br>
-Default: `10`
+Default: `100`
 
 Delay in ms when debouncing execution after file changes.
 

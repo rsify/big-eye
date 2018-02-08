@@ -9,7 +9,7 @@ const debounce = require('lodash.debounce')
 const execa = require('execa')
 
 const defaults = {
-	delay: 10,
+	delay: 100,
 	ignore: [],
 	lazy: false,
 	watch: []
