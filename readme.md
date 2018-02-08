@@ -5,9 +5,13 @@
 
 > execute specified command[s] on file change[s]
 
+
 # install
 
-`$ npm install [-g] big-eye`
+```
+$ npm install [-g] big-eye
+```
+
 
 # usage
 
@@ -36,6 +40,58 @@ $ eye --help
 	  Run eye without arguments to execute the npm start script.
 ```
 
+## api
+
+### bigEye(file, [args], [options])
+
+Execute `file` with `args` when a file matching the `options.watch` array
+gets modified. Returns a new `Eye` instance.
+
+#### file
+
+Type: `String`
+
+Absolute path to the file to be executed. Must be a non-empty `String`.
+
+#### args
+
+Type: `Array`
+
+Arguments that will be passed to child process when executing `file`.
+
+#### options
+
+Type: `Object`
+
+Options object that can take the following keys:
+
+##### watch
+
+Type: `Array`, `String`
+
+Path(s) to files, dir(s) to be watched recursively, or glob pattern(s).
+
+##### ignore
+
+Type: [anymatch](https://github.com/micromatch/anymatch) compatible definition
+
+Path(s) to files, dir(s) to be ignored, regex(es), or glob pattern(s).
+
+##### lazy
+
+Type: `Boolean`<br>
+Default: `false`
+
+If set to `true`, don't exxecute `file` after constructing the instance, but only
+on watched file change.
+
+##### delay
+
+Type: `Number`<br>
+Default: `10`
+
+Delay in ms when debouncing execution after file changes.
+
 # example
 
 ```
@@ -48,10 +104,7 @@ hello!
 big-eye command exited without error, waiting for changes...
 ```
 
-# install
-
-`# npm install --save big-eye`
 
 # license
 
-MIT
+MIT © [nikersify](https://nikerino.com)
