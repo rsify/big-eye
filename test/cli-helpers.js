@@ -26,41 +26,66 @@ const markExecutable = async p => {
 	return {newPath, newName}
 }
 
-test('flagsToOptions', t => {
-	const emptyDir = struc({})
+test('flagsToOptions no flags', t => {
+	const cwd = struc({})
 
-	t.deepEqual(flagsToOptions(emptyDir, {
-		watch: 'a',
-		ignore: 'b',
+	t.deepEqual(flagsToOptions(cwd, {}), {
+		ignore: [],
+		watch: ['.']
+	})
+})
+
+test('flagsToOptions no flags with .gitignore in cwd', t => {
+	const cwd = struc({
+		'.gitignore': 'foo bar'.split(' ').join(os.EOL)
+	})
+
+	t.deepEqual(flagsToOptions(cwd, {}), {
+		ignore: ['foo', 'bar'],
+		watch: ['.']
+	})
+})
+
+test('flagsToOptions flags with .gitignore in cwd', t => {
+	const cwd = struc({
+		'.gitignore': 'foo bar'.split(' ').join(os.EOL)
+	})
+
+	t.deepEqual(flagsToOptions(cwd, {
+		ignore: 'baz'
+	}), {
+		ignore: ['baz'],
+		watch: ['.']
+	})
+})
+
+test('flagsToOptions duplicates', t => {
+	const cwd = struc({})
+
+	t.deepEqual(flagsToOptions(cwd, {
+		ignore: ['foo', 'bar', 'foo'],
+		i: ['bar', 'foo', 'baz'],
+		watch: ['loo', 'lar'],
+		w: 'lar'
+	}), {
+		ignore: ['bar', 'foo', 'baz'],
+		watch: ['lar', 'loo']
+	})
+})
+
+test('flagsToOptions type casting', t => {
+	const cwd = struc({})
+
+	t.deepEqual(flagsToOptions(cwd, {
+		ignore: 'foo',
+		watch: 'bar',
+		lazy: true,
+		delay: '10'
+	}), {
+		ignore: ['foo'],
+		watch: ['bar'],
 		lazy: true,
 		delay: 10
-	}), {
-		watch: ['a'],
-		ignore: ['b'],
-		lazy: true,
-		delay: 10
-	})
-
-	t.deepEqual(flagsToOptions(emptyDir, {
-		watch: ['a'],
-		ignore: 'b',
-		lazy: false
-	}), {
-		watch: ['a'],
-		ignore: ['b'],
-		lazy: false
-	})
-
-	t.deepEqual(flagsToOptions(emptyDir, {}), {
-		watch: ['.'],
-		ignore: []
-	})
-
-	t.deepEqual(flagsToOptions(struc({
-		'.gitignore': 'hello\nworld\n'.split('\n').join(os.EOL)
-	}), {}), {
-		watch: ['.'],
-		ignore: ['hello', 'world']
 	})
 })
 
@@ -71,6 +96,8 @@ test('mergeToArr', t => {
 	t.deepEqual(mergeToArr(['a'], 'b'), ['a', 'b'])
 	t.deepEqual(mergeToArr('a', ['b']), ['a', 'b'])
 	t.deepEqual(mergeToArr(['a'], ['b']), ['a', 'b'])
+	t.deepEqual(mergeToArr(['a'], 'a'), ['a'])
+	t.deepEqual(mergeToArr(['a', 'a'], 'b'), ['a', 'b'])
 })
 
 test('parseCommand no cmd & no package.json', t => {

@@ -46,7 +46,7 @@ const cli = meow(`
 			type: 'string'
 		},
 		ignore: {
-			alias: 'w',
+			alias: 'i',
 			type: 'string'
 		},
 		lazy: {
