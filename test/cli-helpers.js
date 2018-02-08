@@ -1,3 +1,4 @@
+import os from 'os'
 import path from 'path'
 
 import fs from 'fs-extra'
@@ -10,6 +11,20 @@ import {
 	mergeToArr,
 	parseCommand
 } from '../lib/cli-helpers'
+
+const markExecutable = async p => {
+	let newPath = p
+	let newName = path.parse(p).name
+	if (process.platform === 'win32') {
+		newPath = p + '.CMD'
+		newName += '.CMD'
+		await fs.move(p, newPath)
+	} else {
+		await fs.chmod(p, '755')
+	}
+
+	return {newPath, newName}
+}
 
 test('flagsToOptions', t => {
 	const emptyDir = struc({})
@@ -42,7 +57,7 @@ test('flagsToOptions', t => {
 	})
 
 	t.deepEqual(flagsToOptions(struc({
-		'.gitignore': 'hello\nworld\n'
+		'.gitignore': 'hello\nworld\n'.split('\n').join(os.EOL)
 	}), {}), {
 		watch: ['.'],
 		ignore: ['hello', 'world']
@@ -124,11 +139,10 @@ test('parseCommand no cmd & start script in package.json & executable file from 
 		})
 	})
 
-	// Mark as executable
-	await fs.chmod(path.join(cwd, 'node_modules/.bin/foo'), '755')
+	const {newPath} = await markExecutable(path.join(cwd, 'node_modules/.bin/foo'))
 
 	t.deepEqual(parseCommand(cwd, ''), {
-		file: path.join(cwd, 'node_modules/.bin/foo'),
+		file: newPath,
 		args: ['--bar', 'baz']
 	})
 })
@@ -165,10 +179,10 @@ test('parseCommand local executable file', async t => {
 		[name]: ''
 	})
 
-	await fs.chmod(path.join(cwd, name), '755')
+	const {newPath, newName} = await markExecutable(path.join(cwd, name))
 
-	t.deepEqual(parseCommand(cwd, name + ' --bar baz'), {
-		file: path.join(cwd, name),
+	t.deepEqual(parseCommand(cwd, newName + ' --bar baz'), {
+		file: newPath,
 		args: ['--bar', 'baz']
 	})
 })
@@ -179,11 +193,18 @@ test('parseCommand local non executable file', t => {
 		[name]: ''
 	})
 
-	const err = t.throws(() => {
-		parseCommand(cwd, name)
-	}, Error)
+	if (process.platform === 'win32') {
+		t.deepEqual(parseCommand(cwd, name), {
+			file: path.join(cwd, name),
+			args: []
+		})
+	} else {
+		const err = t.throws(() => {
+			parseCommand(cwd, name)
+		}, Error)
 
-	t.is(err.message, `${name} is not executable`)
+		t.is(err.message, `${name} is not executable`)
+	}
 })
 
 test('parseCommand file missing', t => {
@@ -216,10 +237,10 @@ test('parseCommand executable file from node_modules', async t => {
 		}
 	})
 
-	await fs.chmod(path.join(cwd, 'node_modules/.bin/foo'), '755')
+	const {newPath} = await markExecutable(path.join(cwd, 'node_modules/.bin/foo'))
 
 	t.deepEqual(parseCommand(cwd, 'foo --bar baz'), {
-		file: path.join(cwd, 'node_modules/.bin/foo'),
+		file: newPath,
 		args: ['--bar', 'baz']
 	})
 })
