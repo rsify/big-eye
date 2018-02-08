@@ -6,16 +6,16 @@
 > execute specified command[s] on file change[s]
 
 
-# install
+# Install
 
 ```
 $ npm install [-g] big-eye
 ```
 
 
-# usage
+# Usage
 
-## cli
+## CLI
 
 ```
 $ eye --help
@@ -40,7 +40,7 @@ $ eye --help
 	  Run eye without arguments to execute the npm start script.
 ```
 
-## api
+## API
 
 ### bigEye(file, [args], [options])
 
@@ -82,8 +82,8 @@ Path(s) to files, dir(s) to be ignored, regex(es), or glob pattern(s).
 Type: `Boolean`<br>
 Default: `false`
 
-If set to `true`, don't exxecute `file` after constructing the instance, but only
-on watched file change.
+If set to `true`, don't exxecute `file` after constructing the instance, but
+only on watched file change.
 
 ##### delay
 
@@ -92,17 +92,38 @@ Default: `100`
 
 Delay in ms when debouncing execution after file changes.
 
-# example
+### Events
 
-```
-$ eye "echo hello!" -w lib/ -w index.js -i lib/tmp/
-big-eye starting with config:
-	command: echo hello!
-	watch: lib/, index.js
-	ignore: lib/tmp/
-hello!
-big-eye command exited without error, waiting for changes...
-```
+Each `Eye` instance inherits from `EventEmitter` and emits a handful of events:
+
+#### `.on('ready')`
+
+When the `Eye` is ready. Note that this is bound to `chokidar`'s `ready` event.
+
+#### `.on('executing', ref)`
+
+When a new child process is spawned. `ref` is an instance of
+[`child_process`](http://127.0.0.1:50017/Dash/uwksyetr/nodejs/api/child_process.html#child_process_class_childprocess).
+
+#### `on('changes', file)`
+
+Debounced file changes that trigger spawning a child process. `file` is a path
+to the file that caused the event.
+
+#### `.on('success', time)`
+
+When a child exited has exited successfully. `time` is its execution time in
+miliseconds.
+
+#### `.on('failure', time, code)`
+
+When a child has exited unsuccessfully. `time` is its execution time in
+miliseconds, `code` is its exit code.
+
+#### `.on('killed', signal)`
+
+When a child was killed due to file changes, `signal` represents the signal
+used to :knife: it.
 
 
 # license
