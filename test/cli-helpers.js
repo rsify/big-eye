@@ -196,7 +196,7 @@ test('parseCommand .js file', t => {
 
 	t.deepEqual(parseCommand(cwd, 'foo.js'), {
 		file: which.sync('node'),
-		args: []
+		args: ['foo.js']
 	})
 })
 
