@@ -96,10 +96,6 @@ Delay in ms when debouncing execution after file changes.
 
 Each `Eye` instance inherits from `EventEmitter` and emits a handful of events:
 
-#### `.on('ready')`
-
-When the `Eye` is ready. Note that this is bound to `chokidar`'s `ready` event.
-
 #### `.on('executing', ref)`
 
 When a new child process is spawned. `ref` is an instance of

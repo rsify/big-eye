@@ -113,20 +113,18 @@ module.exports = (file, args, options) => {
 		ignoreInitial: true
 	})
 
-	const x = debounce(execute, options.delay)
 	const debounced = debounce((event, path) => {
 		if (event) {
 			events.emit('changes', event, path)
 		}
-		x()
+		execute()
 	}, options.delay)
 
-	watcher.on('all', debounced)
-	watcher.on('ready', () => events.emit('ready'))
-
 	if (!options.lazy) {
-		x()
+		debounced()
 	}
+
+	watcher.on('all', debounced)
 
 	return events
 }

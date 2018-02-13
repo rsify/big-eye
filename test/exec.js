@@ -13,8 +13,8 @@ test('initial', async t => {
 	await delay(2000)
 
 	// Not killed
-	t.is(await stat.connectionCount(), 1)
 	t.is(stat.execCount, 1)
+	t.is(await stat.connectionCount(), 1)
 })
 
 test('on change', async t => {
