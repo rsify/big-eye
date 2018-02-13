@@ -167,7 +167,8 @@ test('parseCommand no cmd & start script in package.json & executable file from 
 
 	t.deepEqual(parseCommand(cwd, ''), {
 		file: newPath,
-		args: ['--bar', 'baz']
+		args: ['--bar', 'baz'],
+		pretty: 'foo --bar baz'
 	})
 })
 
@@ -182,7 +183,8 @@ test('parseCommand no cmd & start script in package.json & executable file from 
 
 	t.deepEqual(parseCommand(cwd, ''), {
 		file: which.sync('echo'),
-		args: ['--bar', 'baz']
+		args: ['--bar', 'baz'],
+		pretty: 'echo --bar baz'
 	})
 })
 
@@ -193,7 +195,8 @@ test('parseCommand .js file', t => {
 
 	t.deepEqual(parseCommand(cwd, 'foo.js'), {
 		file: which.sync('node'),
-		args: ['foo.js']
+		args: ['foo.js'],
+		pretty: 'node foo.js'
 	})
 })
 
@@ -207,7 +210,8 @@ test('parseCommand local executable file', async t => {
 
 	t.deepEqual(parseCommand(cwd, newName + ' --bar baz'), {
 		file: newPath,
-		args: ['--bar', 'baz']
+		args: ['--bar', 'baz'],
+		pretty: newName + ' --bar baz'
 	})
 })
 
@@ -220,7 +224,8 @@ test('parseCommand local non executable file', t => {
 	if (process.platform === 'win32') {
 		t.deepEqual(parseCommand(cwd, name), {
 			file: path.join(cwd, name),
-			args: []
+			args: [],
+			pretty: name
 		})
 	} else {
 		const err = t.throws(() => {
@@ -247,7 +252,8 @@ test('parseCommand executable file from PATH', t => {
 
 	t.deepEqual(parseCommand(cwd, 'echo --bar baz'), {
 		file: which.sync('echo'),
-		args: ['--bar', 'baz']
+		args: ['--bar', 'baz'],
+		pretty: 'echo --bar baz'
 	})
 })
 
@@ -265,7 +271,8 @@ test('parseCommand executable file from node_modules', async t => {
 
 	t.deepEqual(parseCommand(cwd, 'foo --bar baz'), {
 		file: newPath,
-		args: ['--bar', 'baz']
+		args: ['--bar', 'baz'],
+		pretty: 'foo --bar baz'
 	})
 })
 
@@ -308,6 +315,7 @@ test('parseCommand directory and node_module with the same name', async t => {
 
 	t.deepEqual(parseCommand(cwd, 'foo --bar baz'), {
 		file: newPath,
-		args: ['--bar', 'baz']
+		args: ['--bar', 'baz'],
+		pretty: 'foo --bar baz'
 	})
 })

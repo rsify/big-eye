@@ -87,7 +87,7 @@ try {
 	} else {
 		const eye = bigEye(command.file, command.args, options)
 
-		logger.updateState('starting', {command: ''})
+		logger.updateState('starting', {command: command.pretty})
 
 		eye.on('executing', () => {
 			logger.updateState('executing')
