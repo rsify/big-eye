@@ -5,7 +5,7 @@
 
 const meow = require('meow')
 
-const logger = require('./lib/logger')
+const Logger = require('./lib/logger')
 const pkg = require('./package.json')
 
 const helpers = require('./lib/cli-helpers')
@@ -68,45 +68,44 @@ const cli = meow(`
 })
 
 const options = flagsToOptions(cwd, cli.flags)
-const command = parseCommand(cwd, cli.input.join(' '))
+
+const logger = new Logger(process.stdout, {
+	quiet: options.quiet
+})
+
+let command
+try {
+	command = parseCommand(cwd, cli.input.join(' '))
+} catch (err) {
+	logger.updateState('error', {msg: err.message})
+	cli.showHelp()
+}
 
 try {
 	if (command.length === 0) {
 		cli.showHelp()
 	} else {
-		const log = options.quiet ? () => {} : require('./lib/logger')
 		const eye = bigEye(command.file, command.args, options)
 
-		const leadMsg = 'starting with config:\n' +
-			`\tcommand: ${command.file + ' ' + command.args.join(' ')}\n` +
-			`\twatch: ${options.watch.join(', ')}\n` +
-			`\tignore: ${options.ignore.join(', ')}`
-
-		log('info', leadMsg)
+		logger.updateState('starting', {command: ''})
 
 		eye.on('executing', () => {
-			log('info', 'executing child...')
+			logger.updateState('executing')
 		})
 
 		eye.on('changes', (event, path) => {
-			log('info', `file changes detected (${event} ${path})`)
+			logger.updateState('changes', {event, path})
 		})
 
 		eye.on('success', time => {
-			log('success', `command exited without error (${time}ms), ` +
-				'waiting for changes...')
+			logger.updateState('success', {time})
 		})
 
 		eye.on('failure', (time, code) => {
-			log('error', `command exited with code ${code} (${time}ms), ` +
-				'waiting for changes...')
-		})
-
-		eye.on('killed', signal => {
-			log('info', `child killed (${signal})`)
+			logger.updateState('failure', {time, code})
 		})
 	}
 } catch (err) {
-	logger('error', err.stack)
+	console.log(err)
 	process.exit(1)
 }
