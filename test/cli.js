@@ -10,5 +10,5 @@ const cli = (args, opts) => execa(path.join(moduleRoot, 'cli.js'), args, opts)
 
 test('is executable', async t => {
 	const {stdout} = await cli(['--version'])
-	t.not(stdout.indexOf(pkg.name), -1)
+	t.is(stdout, pkg.version)
 })
