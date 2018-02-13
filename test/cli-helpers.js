@@ -119,8 +119,7 @@ test('parseCommand no cmd & invalid package.json', t => {
 		parseCommand(cwd, '')
 	})
 
-	t.true(err.message.indexOf('no command specified & missing package.json' +
-		' start script (') === 0)
+	t.true(err.message.indexOf('no command specified (') === 0)
 })
 
 test('parseCommand no cmd & scripts in package.json', t => {
@@ -132,8 +131,7 @@ test('parseCommand no cmd & scripts in package.json', t => {
 		parseCommand(cwd, '')
 	})
 
-	t.is(err.message, 'no command specified & missing package.json' +
-		' start script (Error: missing package.json start script)')
+	t.is(err.message, 'no command specified (missing package.json start script)')
 })
 
 test('parseCommand no cmd & no start script in package.json', t => {
@@ -147,8 +145,7 @@ test('parseCommand no cmd & no start script in package.json', t => {
 		parseCommand(cwd, '')
 	})
 
-	t.is(err.message, 'no command specified & missing package.json' +
-		' start script (Error: missing package.json start script)')
+	t.is(err.message, 'no command specified (missing package.json start script)')
 })
 
 test('parseCommand no cmd & start script in package.json & executable file from node_modules in package.json', async t => {
