@@ -112,7 +112,7 @@ test('changes debounced', async t => {
 	t.is(spy.callCount, 2)
 })
 
-test('success & failure', async t => {
+test('exited', async t => {
 	const p = struc({
 		a: ''
 	})
@@ -121,32 +121,26 @@ test('success & failure', async t => {
 		watch: p
 	})
 
-	const successSpy = sinon.spy()
-	const failureSpy = sinon.spy()
+	const spy = sinon.spy()
 
-	eye.on('success', successSpy)
-	eye.on('failure', failureSpy)
+	eye.on('exited', spy)
 
-	t.is(successSpy.callCount, 0)
+	t.is(spy.callCount, 0)
 
 	await delay(2000)
 	stat.firstSocket.write('exit 0')
 	await delay(1000)
-	t.is(successSpy.callCount, 1)
-	t.is(failureSpy.callCount, 0)
+	t.is(spy.callCount, 1)
+	t.is(typeof spy.lastCall.args[0], 'number')
 	touch(p + '/a')
 
 	await delay(1000)
 	stat.firstSocket.write('exit 69')
 
 	await delay(1000)
-	t.is(successSpy.callCount, 1)
-	t.is(failureSpy.callCount, 1)
-
-	t.is(typeof successSpy.args[0][0], 'number')
-
-	t.is(typeof failureSpy.args[0][0], 'number')
-	t.is(failureSpy.args[0][1], 69)
+	t.is(spy.callCount, 2)
+	t.is(typeof spy.lastCall.args[0], 'number')
+	t.is(spy.lastCall.args[1], 69)
 })
 
 test('killed', async t => {

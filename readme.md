@@ -110,14 +110,9 @@ When a new child process is spawned. `ref` is an instance of
 Debounced file changes that trigger spawning a child process. `file` is a path
 to the file that caused the event.
 
-#### `.on('success', time)`
+#### `.on('exited', time, code)`
 
-When a child exited has exited successfully. `time` is its execution time in
-miliseconds.
-
-#### `.on('failure', time, code)`
-
-When a child has exited unsuccessfully. `time` is its execution time in
+When a child has exited. `time` is its execution time in
 miliseconds, `code` is its exit code.
 
 #### `.on('killed', signal)`

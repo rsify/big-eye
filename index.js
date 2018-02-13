@@ -99,11 +99,7 @@ module.exports = (file, args, options) => {
 				} else {
 					const time = Number(new Date()) - ref.createdTime
 
-					if (code === 0) {
-						events.emit('success', time)
-					} else {
-						events.emit('failure', time, code)
-					}
+					events.emit('exited', time, code)
 				}
 
 				ref = null

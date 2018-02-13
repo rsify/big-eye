@@ -97,12 +97,12 @@ try {
 			logger.updateState('changes', {event, path})
 		})
 
-		eye.on('success', time => {
-			logger.updateState('success', {time})
-		})
-
-		eye.on('failure', (time, code) => {
-			logger.updateState('failure', {time, code})
+		eye.on('exited', (time, code) => {
+			if (code === 0) {
+				logger.updateState('success', {time})
+			} else {
+				logger.updateState('failure', {time, code})
+			}
 		})
 	}
 } catch (err) {
