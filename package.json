@@ -1,6 +1,6 @@
 {
   "name": "big-eye",
-  "version": "0.0.2",
+  "version": "0.1.0",
   "description": "Execute commands on file changes",
   "bin": {
     "eye": "cli.js"
