@@ -1,9 +1,12 @@
-# big-eye
+# ![Logo](media/logo.png)
+
+> Execute specified command on file change(s)
+
 [![Travis build](https://travis-ci.org/nikersify/big-eye.svg?branch=master)](https://travis-ci.org/nikersify/big-eye)
 [![AppVeyor build](https://ci.appveyor.com/api/projects/status/f6bhfklqk61bnqrc?svg=true)](https://ci.appveyor.com/project/nikersify/big-eye)
-[![Coveralls](https://coveralls.io/repos/github/nikersify/big-eye/badge.svg?branch=master)](https://coveralls.io/github/nikersify/big-eye?branch=master)
+[![Coveralls](https://coveralls.io/repos/github/nikersify/big-eye/badge.svg?branch=master)](https://coveralls.io/github/nikersify/big-eye?branch=master) 
 
-> execute specified command[s] on file change[s]
+![Video](media/preview.gif)
 
 
 # Install
@@ -117,6 +120,6 @@ When a child was killed due to file changes, `signal` represents the signal
 used to :knife: it.
 
 
-# license
+# License
 
 MIT © [nikersify](https://nikerino.com)
