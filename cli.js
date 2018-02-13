@@ -6,7 +6,6 @@
 const meow = require('meow')
 
 const Logger = require('./lib/logger')
-const pkg = require('./package.json')
 
 const helpers = require('./lib/cli-helpers')
 
@@ -37,9 +36,6 @@ const cli = meow(`
 	Tips
 	  Run eye without arguments to execute the npm start script.
 `, {
-	version: `${pkg.name} (${pkg.version})\n` +
-		`maintained by ${pkg.author}\n` +
-		`bug reports: ${pkg.bugs}`,
 	flags: {
 		watch: {
 			alias: 'w',
