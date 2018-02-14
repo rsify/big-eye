@@ -85,7 +85,7 @@ Path(s) to files, dir(s) to be ignored, regex(es), or glob pattern(s).
 Type: `Boolean`<br>
 Default: `false`
 
-If set to `true`, don't exxecute `file` after constructing the instance, but
+If set to `true`, don't execute `file` after constructing the instance, but
 only on watched file change.
 
 ##### delay
