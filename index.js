@@ -35,7 +35,7 @@ module.exports = (file, args, options) => {
 		options = {}
 	}
 
-	const opts = Object.assign({}, defaults, options)
+	const opts = {...defaults, ...options}
 
 	if (typeof file !== 'string') {
 		throw new TypeError(`file must be a string, got ${typeof file}`)
@@ -84,7 +84,7 @@ module.exports = (file, args, options) => {
 			} else {
 				resolve()
 			}
-		}).then(() => {
+		}).then(() => { // eslint-disable-line promise/prefer-await-to-then
 			ref = execa(file, args, {
 				stdio: 'inherit'
 			})

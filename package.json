@@ -10,7 +10,7 @@
   "bugs": "htttps://github.com/nikersify/big-eye/issues",
   "author": "nikersify <nikersify@nikerino.com> (nikerino.com)",
   "engines": {
-    "node": ">=6"
+    "node": ">=8"
   },
   "license": "MIT",
   "scripts": {
