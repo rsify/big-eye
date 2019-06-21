@@ -1,6 +1,6 @@
 import test from 'ava'
 
-import bigEye from '../'
+import bigEye from '..'
 
 test('constructor (file)', t => {
 	t.notThrows(() => {

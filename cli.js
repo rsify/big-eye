@@ -9,8 +9,7 @@ const Logger = require('./lib/logger')
 
 const helpers = require('./lib/cli-helpers')
 
-const flagsToOptions = helpers.flagsToOptions
-const parseCommand = helpers.parseCommand
+const {flagsToOptions, parseCommand} = helpers
 
 const cwd = process.cwd()
 
@@ -72,8 +71,8 @@ const logger = new Logger(process.stdout, {
 let command
 try {
 	command = parseCommand(cwd, cli.input.join(' '))
-} catch (err) {
-	logger.updateState('error', {msg: err.message})
+} catch (error) {
+	logger.updateState('error', {msg: error.message})
 	cli.showHelp()
 }
 
@@ -101,7 +100,7 @@ try {
 			}
 		})
 	}
-} catch (err) {
-	console.log(err)
+} catch (error) {
+	console.error(error)
 	process.exit(1)
 }

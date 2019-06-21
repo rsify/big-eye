@@ -117,6 +117,7 @@ module.exports = (file, args, options) => {
 		if (event) {
 			events.emit('changes', event, path)
 		}
+
 		execute()
 	}, options.delay)
 
